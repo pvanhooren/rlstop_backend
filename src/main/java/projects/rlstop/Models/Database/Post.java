@@ -1,5 +1,6 @@
-package projects.rlstop.Models;
+package projects.rlstop.Models.Database;
 
+import com.sun.istack.NotNull;
 import projects.rlstop.Models.Database.User;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     @Column(name="post_id")
     private int postId;
 
@@ -18,16 +20,18 @@ public class Post {
     @Column(name="offers")
     private String offers;
 
-    @Column(name="user_id")
-    private int userId;
+//    @Column(name="user_id")
+//    @NotNull
+//    private int userId;
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Post(String wants, String offers, User user){
         this.wants = wants;
         this.offers = offers;
-        this.userId = user.getUserId();
+//        this.userId = user.getUserId();
         this.user = user;
     }
 
@@ -59,13 +63,13 @@ public class Post {
         this.wants = wants;
     }
 
-    public int getUserId() {
-        return userId;
-    }
+//    public int getUserId() {
+//        return user.getUserId();
+//    }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+//    public void setUserId(int userId) {
+//        this.user = userId;
+//    }
 
     public User getUser() { return user; }
 

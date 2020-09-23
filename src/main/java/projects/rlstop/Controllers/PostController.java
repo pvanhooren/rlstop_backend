@@ -3,8 +3,8 @@ package projects.rlstop.Controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import projects.rlstop.Models.Database.Post;
 import projects.rlstop.Models.Database.User;
-import projects.rlstop.Models.Post;
 import projects.rlstop.Repositories.PostRepository;
 import projects.rlstop.Repositories.UserRepository;
 
@@ -33,7 +33,7 @@ public class PostController {
         ArrayList<Post> posts = new ArrayList<Post>();
 
         for(Post trade : iposts){
-            Optional<User> user = userRepository.findById(trade.getUserId());
+            Optional<User> user = userRepository.findById(trade.getUser().getUserId());
             if(user.isPresent()) {
                 trade.setUser(user.get());
             }
@@ -51,7 +51,7 @@ public class PostController {
                 Iterable<Post> allTrades = postRepository.findAll();
 
                 for (Post post : allTrades) {
-                    Optional<User> optUser = userRepository.findById(post.getUserId());
+                    Optional<User> optUser = userRepository.findById(post.getUser().getUserId());
                     if (optUser.isPresent()) {
                         if (optUser.get().getPlatform() == platform) {
                             trades.add(post);
@@ -70,7 +70,7 @@ public class PostController {
         Optional<Post> optTrade = postRepository.findById(Id);
         if (optTrade.isPresent()) {
             Post trade = optTrade.get();
-            Optional<User> user = userRepository.findById(trade.getUserId());
+            Optional<User> user = userRepository.findById(trade.getUser().getUserId());
             if(user.isPresent()) {
                 trade.setUser(user.get());
             }
@@ -123,7 +123,6 @@ public class PostController {
             if (userId != 0) {
                 Optional<User> user = userRepository.findById(userId);
                 if (user.isPresent()) {
-                    trade.setUserId(userId);
                     trade.setUser(user.get());
                 }
                 postRepository.save(trade);

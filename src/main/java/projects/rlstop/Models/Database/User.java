@@ -1,5 +1,7 @@
 package projects.rlstop.Models.Database;
 
+
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -28,6 +30,7 @@ public class User {
 
     @Column(name="wishlist")
     private String wishlist;
+
 
     public User(String userName, String emailAddress, String password, String platform, String platformID, String newWishlistItem){
         this.userName = userName;
