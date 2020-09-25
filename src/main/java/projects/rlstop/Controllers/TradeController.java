@@ -103,7 +103,7 @@ public class TradeController {
 
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<Trade> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
-            if (wants != null && offers != null && userId != 0) {
+            if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
                 Optional<User> user = userRepository.findById(userId);
                 if (user.isPresent()) {
                     Trade trade = new Trade(wants, offers, user.get());
@@ -120,10 +120,10 @@ public class TradeController {
             Optional<Trade> optTrade = tradeRepository.findById(Id);
             if (optTrade.isPresent()) {
                 Trade trade = optTrade.get();
-                if (wants != null) {
+                if (wants != null && !wants.isEmpty()) {
                     trade.setWants(wants);
                 }
-                if (offers != null) {
+                if (offers != null && !offers.isEmpty()) {
                     trade.setOffers(offers);
                 }
                 if (userId != 0) {

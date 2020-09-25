@@ -76,7 +76,7 @@ public class UserController {
 
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<User> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
-        if(name != null && email != null && password != null && platform != null && platformID != null && wishlist != null) {
+        if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && !platform.isEmpty() && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             User user = new User(name, email, password, platform, platformID, wishlist);
             User result = userRepository.save(user);
             return new ResponseEntity<User>(result, HttpStatus.CREATED);
@@ -89,12 +89,12 @@ public class UserController {
         Optional<User> optUser = userRepository.findById(Id);
         if(optUser.isPresent()){
             User user = optUser.get();
-            if(name!=null) { user.setUserName(name); }
-            if(email!=null) { user.setEmailAddress(email); }
-            if(password!=null) { user.setPasswordHash(Objects.hash(password)); }
-            if(platform!=null) { user.setPlatform(platform); }
-            if(platformID!=null) { user.setUserName(platformID); }
-            if(wishlist!=null) { user.addToWishlist(wishlist); }
+            if(name!=null && !name.isEmpty()) { user.setUserName(name); }
+            if(email!=null && !email.isEmpty()) { user.setEmailAddress(email); }
+            if(password!=null && !password.isEmpty()) { user.setPasswordHash(Objects.hash(password)); }
+            if(platform!=null && !platform.isEmpty()) { user.setPlatform(platform); }
+            if(platformID!=null && !platformID.isEmpty()) { user.setUserName(platformID); }
+            if(wishlist!=null && !wishlist.isEmpty()) { user.addToWishlist(wishlist); }
             User updatedUser = userRepository.save(user);
             return new ResponseEntity<User>(updatedUser, HttpStatus.OK) ;
         }
