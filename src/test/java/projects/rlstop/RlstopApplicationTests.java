@@ -15,7 +15,7 @@ class RlstopApplicationTests {
     @Test
     void hashPasswordTest() {
         User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-0123-4567-8910", "Party Time");
-        assertEquals(Objects.hash("123456"), user.getPasswordHash());
+        assertEquals(Objects.hash("12345zes"), user.getPasswordHash());
     }
 
     @Test
