@@ -1,13 +1,12 @@
 package projects.rlstop.Models.Database;
 
 import com.sun.istack.NotNull;
-import projects.rlstop.Models.Database.User;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "posts")
-public class Post {
+public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
@@ -28,14 +27,14 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Post(String wants, String offers, User user){
+    public Trade(String wants, String offers, User user){
         this.wants = wants;
         this.offers = offers;
 //        this.userId = user.getUserId();
         this.user = user;
     }
 
-    public Post() {
+    public Trade() {
 
     }
 
@@ -79,8 +78,8 @@ public class Post {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Post post = (Post) o;
-        return postId == post.getPostId();
+        Trade trade = (Trade) o;
+        return postId == trade.getPostId();
     }
 
     @Override
@@ -89,7 +88,7 @@ public class Post {
                 user.getUserName() + "\n" +
                 "Wants: " + wants + "\n" +
                 "Offers: " + offers + "\n" +
-                user.getPlatform().toString() + " ID: " + user.getPlatformID() + "\n" +
+                user.getPlatform() + " ID: " + user.getPlatformID() + "\n" +
                 "}" + "\n" ;
     }
 }
