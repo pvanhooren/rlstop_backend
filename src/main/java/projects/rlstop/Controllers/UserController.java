@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
+@CrossOrigin
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -36,20 +37,27 @@ public class UserController {
     }
 
     @GetMapping(path="/filter")
-    public @ResponseBody ResponseEntity<Iterable<User>> getUsersByPlatform(@RequestParam String platform){
+    public @ResponseBody ResponseEntity<ArrayList<User>> getUsersByPlatform(@RequestParam String platform){
+        ArrayList<User> users = new ArrayList<User>();
+
         if (platform != "") {
             if (platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
-                Iterable<User> users = userRepository.findAllByPlatform(platform);
-                int size = getIterableSize(users);
-
-                if (size == 0) {
-                    return new ResponseEntity("There are currently no users on the given platform in the database.", HttpStatus.NOT_FOUND);
-                } else {
-                    return new ResponseEntity<Iterable<User>>(users, HttpStatus.FOUND);
+                Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
+//                int size = getIterableSize(users);
+                for(User user : usersIterable){
+                    if(user !=null) {
+                        users.add(user);
+                    }
                 }
+//                if (size == 0) {
+//                    return new ResponseEntity("There are currently no users on the given platform in the database.", HttpStatus.NO_CONTENT);
+//                } else {
+
             }
         }
-        return new ResponseEntity("Please provide a valid platform to filter on.", HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<ArrayList<User>>(users, HttpStatus.FOUND);
+//        return new ResponseEntity("Please provide a valid platform to filter on.", HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/{Id}")

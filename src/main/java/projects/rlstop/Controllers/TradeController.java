@@ -11,12 +11,12 @@ import projects.rlstop.Models.Database.User;
 import projects.rlstop.Repositories.TradeRepository;
 import projects.rlstop.Repositories.UserRepository;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@CrossOrigin
 @Controller
 @RequestMapping("/trades")
 public class TradeController {
@@ -57,21 +57,23 @@ public class TradeController {
 
                 for (Trade trade : allTrades) {
                     Optional<User> user = userRepository.findById(trade.getUser().getUserId());
-                        if(user.isPresent()) {
-                            trade.setUser(user.get());
-                        }
+                    if (user.isPresent()) {
+                        trade.setUser(user.get());
+                    }
                     trades.add(trade);
                 }
-            } else {
-                return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NOT_FOUND);
             }
-        } else {
-            return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NOT_FOUND);
         }
-
-        if(trades.size() == 0){
-            return new ResponseEntity("There are currently no trades on the given platform in the database", HttpStatus.NOT_FOUND);
-        }
+//            } else {
+//                return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NO_CONTENT);
+//            }
+//        } else {
+//            return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NO_CONTENT);
+//        }
+//
+//        if(trades.size() == 0){
+//            return new ResponseEntity("There are currently no trades on the given platform in the database", HttpStatus.NO_CONTENT);
+//        }
         return new ResponseEntity<ArrayList<Trade>>(trades, HttpStatus.FOUND);
     }
 
