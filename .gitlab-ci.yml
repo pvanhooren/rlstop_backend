@@ -4,6 +4,7 @@ stages:
   - sonarqube
 build:
   script: "mvn compile"
+  stage: build
 test:
   script: "mvn test"
   stage: test
