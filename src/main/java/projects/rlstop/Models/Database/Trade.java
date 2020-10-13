@@ -19,10 +19,6 @@ public class Trade {
     @Column(name="offers")
     private String offers;
 
-//    @Column(name="user_id")
-//    @NotNull
-//    private int userId;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -30,7 +26,6 @@ public class Trade {
     public Trade(String wants, String offers, User user){
         this.wants = wants;
         this.offers = offers;
-//        this.userId = user.getUserId();
         this.user = user;
     }
 
@@ -62,14 +57,6 @@ public class Trade {
         this.wants = wants;
     }
 
-//    public int getUserId() {
-//        return user.getUserId();
-//    }
-
-//    public void setUserId(int userId) {
-//        this.user = userId;
-//    }
-
     public User getUser() { return user; }
 
     public void setUser(User user) { this.user = user; }
@@ -80,6 +67,11 @@ public class Trade {
         if (o == null || getClass() != o.getClass()) return false;
         Trade trade = (Trade) o;
         return postId == trade.getPostId();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override

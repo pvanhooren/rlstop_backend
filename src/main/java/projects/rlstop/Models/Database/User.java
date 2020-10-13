@@ -112,6 +112,11 @@ public class User {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "User (" + userId + ") {" + "\n" +
                 "Email Address = " + emailAddress + "\n" +

@@ -3,3 +3,6 @@ build:
 test:
   script: "mvn test"
   stage: test
+sonarqube:
+  script: "mvn sonar:sonar"
+  stage: sonarqube

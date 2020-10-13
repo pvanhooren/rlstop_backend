@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import projects.rlstop.Models.Database.User;
 import projects.rlstop.Repositories.UserRepository;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
@@ -40,19 +38,14 @@ public class UserController {
     public @ResponseBody ResponseEntity<ArrayList<User>> getUsersByPlatform(@RequestParam String platform){
         ArrayList<User> users = new ArrayList<User>();
 
-        if (platform != "") {
+        if (platform.equals("")) {
             if (platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
                 Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
-//                int size = getIterableSize(users);
                 for(User user : usersIterable){
                     if(user !=null) {
                         users.add(user);
                     }
                 }
-//                if (size == 0) {
-//                    return new ResponseEntity("There are currently no users on the given platform in the database.", HttpStatus.NO_CONTENT);
-//                } else {
-
             }
         }
 
