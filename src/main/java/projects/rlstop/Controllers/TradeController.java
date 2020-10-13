@@ -50,7 +50,7 @@ public class TradeController {
     @GetMapping(path = "/filter")
     public @ResponseBody ResponseEntity<ArrayList<Trade>> getTradesByPlatform(@RequestParam String platform) {
         ArrayList<Trade> trades = new ArrayList<Trade>();
-        if (platform.equals("")) {
+        if (!platform.equals("")) {
             if (platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
                 Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatform(platform);
 

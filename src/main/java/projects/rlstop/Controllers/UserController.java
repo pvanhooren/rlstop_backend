@@ -38,7 +38,7 @@ public class UserController {
     public @ResponseBody ResponseEntity<ArrayList<User>> getUsersByPlatform(@RequestParam String platform){
         ArrayList<User> users = new ArrayList<User>();
 
-        if (platform.equals("")) {
+        if (!platform.equals("")) {
             if (platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
                 Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
                 for(User user : usersIterable){
