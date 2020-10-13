@@ -9,5 +9,5 @@ test:
   script: "mvn test"
   stage: test
 sonarqube:
-  script: "mvn sonar:sonar"
+  script: "mvn compile sonar:sonar -Dsonar.java.binaries=target/classes"
   stage: sonarqube
