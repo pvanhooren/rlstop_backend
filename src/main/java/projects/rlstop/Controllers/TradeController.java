@@ -63,16 +63,6 @@ public class TradeController {
                 }
             }
         }
-//            } else {
-//                return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NO_CONTENT);
-//            }
-//        } else {
-//            return new ResponseEntity("Please provide a valid platform to filter on", HttpStatus.NO_CONTENT);
-//        }
-//
-//        if(trades.size() == 0){
-//            return new ResponseEntity("There are currently no trades on the given platform in the database", HttpStatus.NO_CONTENT);
-//        }
         return new ResponseEntity<ArrayList<Trade>>(trades, HttpStatus.FOUND);
     }
 

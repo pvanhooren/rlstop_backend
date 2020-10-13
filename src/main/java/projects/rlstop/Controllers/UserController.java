@@ -50,12 +50,10 @@ public class UserController {
         }
 
         return new ResponseEntity<ArrayList<User>>(users, HttpStatus.FOUND);
-//        return new ResponseEntity("Please provide a valid platform to filter on.", HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(path = "/{Id}")
     public @ResponseBody ResponseEntity<User> getUserPath(@PathVariable int Id) {
-        //User user = fakeDatabase.getUser(Id);
         Optional<User> user = userRepository.findById(Id);
         if (user.isPresent()){
             return new ResponseEntity<User>(user.get(), HttpStatus.FOUND);
