@@ -47,6 +47,26 @@ public class TradeController {
         return new ResponseEntity<ArrayList<Trade>>(trades, HttpStatus.FOUND);
     }
 
+    @GetMapping(path = "/user")
+    public @ResponseBody ResponseEntity<ArrayList<Trade>> getTradesByUser(@RequestParam int id){
+        ArrayList<Trade> trades = new ArrayList<>();
+
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent()){
+            Iterable<Trade> allTrades = tradeRepository.findAllByUserUserId(id);
+
+            for (Trade trade : allTrades) {
+                Optional<User> user2 = userRepository.findById(trade.getUser().getUserId());
+                if (user.isPresent()) {
+                    trade.setUser(user2.get());
+                }
+                trades.add(trade);
+            }
+        }
+
+        return new ResponseEntity<ArrayList<Trade>>(trades, HttpStatus.FOUND);
+    }
+
     @GetMapping(path = "/filter")
     public @ResponseBody ResponseEntity<ArrayList<Trade>> getTradesByPlatform(@RequestParam String platform) {
         ArrayList<Trade> trades = new ArrayList<Trade>();

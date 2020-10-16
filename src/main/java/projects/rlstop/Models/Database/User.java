@@ -2,7 +2,10 @@ package projects.rlstop.Models.Database;
 
 
 
+import projects.rlstop.Helpers.StringListConverter;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Entity
@@ -28,8 +31,9 @@ public class User {
     @Column(name="platformid")
     private String platformID;
 
+    @Convert(converter = StringListConverter.class)
     @Column(name="wishlist")
-    private String wishlist;
+    private ArrayList<String> wishlist;
 
 
     public User(String userName, String emailAddress, String password, String platform, String platformID, String newWishlistItem){
@@ -38,7 +42,7 @@ public class User {
         this.passwordHash = Objects.hash(password);
         this.platform = platform;
         this.platformID = platformID;
-        wishlist = newWishlistItem;
+        wishlist.add(newWishlistItem);
     }
 
     public User() {
@@ -93,15 +97,19 @@ public class User {
         this.platformID = platformID;
     }
 
-    public String getWishlist() {
+    public ArrayList<String> getWishlist() {
         return wishlist;
     }
 
-    public void setWishlist(String wishlist) {
+    public void setWishlist(ArrayList<String> wishlist) {
         this.wishlist = wishlist;
     }
 
-    public void addToWishlist(String item) { this.wishlist += ", " + item; }
+    public void addToWishlist(String item) { this.wishlist.add(item); }
+
+    public void clearWishlist() { this.wishlist.clear(); }
+
+    public void removeFromWishlist(String item) { this.wishlist.remove(item); }
 
     @Override
     public boolean equals(Object o) {

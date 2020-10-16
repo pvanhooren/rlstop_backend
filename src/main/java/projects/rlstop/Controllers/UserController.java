@@ -84,7 +84,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/{Id}")
-    public @ResponseBody ResponseEntity<User> updateUser(@PathVariable int Id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
+    public @ResponseBody ResponseEntity<User> updateUser(@PathVariable int Id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID) {
         Optional<User> optUser = userRepository.findById(Id);
         if(optUser.isPresent()){
             User user = optUser.get();
@@ -93,12 +93,57 @@ public class UserController {
             if(password!=null && !password.isEmpty()) { user.setPasswordHash(Objects.hash(password)); }
             if(platform!=null && !platform.isEmpty()) { user.setPlatform(platform); }
             if(platformID!=null && !platformID.isEmpty()) { user.setUserName(platformID); }
-            if(wishlist!=null && !wishlist.isEmpty()) { user.addToWishlist(wishlist); }
             User updatedUser = userRepository.save(user);
             return new ResponseEntity<User>(updatedUser, HttpStatus.OK) ;
         }
         return new ResponseEntity("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
     }
+
+//    @GetMapping(path = "/{Id}/wishlist")
+//    public @ResponseBody ResponseEntity<ArrayList<String>> getWishlist(@PathVariable int Id){
+//        Optional<User> optUser = userRepository.findById(Id);
+//        if(optUser.isPresent()) {
+//            User user = optUser.get();
+//        }
+//        return new ResponseEntity<List<String>>(wishlist, HttpStatus.OK);
+//    }
+
+    @PutMapping(path = "/{Id}/add/{item}")
+    public @ResponseBody ResponseEntity<User> addToWishlist(@PathVariable int Id, @PathVariable String item){
+        Optional<User> optUser = userRepository.findById(Id);
+        if(optUser.isPresent()) {
+            User user = optUser.get();
+            user.addToWishlist(item);
+            User updatedUser = userRepository.save(user);
+            return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        }
+        return null;
+    }
+
+    @PutMapping(path = "/{Id}/remove/{item}")
+    public @ResponseBody ResponseEntity<User> removeFromWishlist(@PathVariable int Id, @PathVariable String item){
+        Optional<User> optUser = userRepository.findById(Id);
+        if(optUser.isPresent()) {
+            User user = optUser.get();
+            user.removeFromWishlist(item);
+            User updatedUser = userRepository.save(user);
+            return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        }
+        return null;
+    }
+
+    @PutMapping(path = "/{Id}/clear")
+    public @ResponseBody ResponseEntity<User> clearWishlist(@PathVariable int Id){
+        Optional<User> optUser = userRepository.findById(Id);
+        if(optUser.isPresent()) {
+            User user = optUser.get();
+            user.clearWishlist();
+            User updatedUser = userRepository.save(user);
+            return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        }
+        return null;
+    }
+
 
     public int getIterableSize(Iterable<User> users){
         int size = 0;
