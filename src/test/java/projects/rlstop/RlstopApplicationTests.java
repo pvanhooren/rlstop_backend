@@ -28,7 +28,7 @@ class RlstopApplicationTests {
     void addToWishlistTest(){
         User user = new User("Fifalosophy", "matthy@gmail.com", "duimpiee", "XBox", "matthyas", "Tidal Stream");
         user.addToWishlist("20XX");
-        assertEquals("Tidal Stream, 20XX", user.getWishlist());
+        assertEquals("20XX", user.getWishlist().get(1));
     }
 
     @Test

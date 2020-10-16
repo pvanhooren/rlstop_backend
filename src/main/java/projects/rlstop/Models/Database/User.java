@@ -33,7 +33,7 @@ public class User {
 
     @Convert(converter = StringListConverter.class)
     @Column(name="wishlist")
-    private ArrayList<String> wishlist;
+    private ArrayList<String> wishlist = new ArrayList<String>();
 
 
     public User(String userName, String emailAddress, String password, String platform, String platformID, String newWishlistItem){
@@ -42,7 +42,7 @@ public class User {
         this.passwordHash = Objects.hash(password);
         this.platform = platform;
         this.platformID = platformID;
-        wishlist.add(newWishlistItem);
+        this.wishlist.add(newWishlistItem);
     }
 
     public User() {
