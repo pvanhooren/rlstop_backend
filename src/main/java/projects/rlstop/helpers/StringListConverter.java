@@ -1,4 +1,4 @@
-package projects.rlstop.Helpers;
+package projects.rlstop.helpers;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

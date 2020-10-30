@@ -1,11 +1,13 @@
-package projects.rlstop.Models.Database;
+package projects.rlstop.models.database;
 
 
 
-import projects.rlstop.Helpers.StringListConverter;
+import projects.rlstop.helpers.StringListConverter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,16 +35,23 @@ public class User {
 
     @Convert(converter = StringListConverter.class)
     @Column(name="wishlist")
-    private ArrayList<String> wishlist = new ArrayList<String>();
+    private List<String> wishlist = new ArrayList<>();
 
 
-    public User(String userName, String emailAddress, String password, String platform, String platformID, String newWishlistItem){
+    public User(String userName, String emailAddress, String password, String platform, String platformID, String wishlist){
         this.userName = userName;
         this.emailAddress = emailAddress;
         this.passwordHash = Objects.hash(password);
         this.platform = platform;
         this.platformID = platformID;
-        this.wishlist.add(newWishlistItem);
+
+        if(wishlist.contains(",")) {
+            String[] elements = wishlist.split(",");
+            List<String> fixedLenghtList = Arrays.asList(elements);
+            this.wishlist = new ArrayList<>(fixedLenghtList);
+        } else {
+            this.wishlist.add(wishlist);
+        }
     }
 
     public User() {
@@ -97,15 +106,23 @@ public class User {
         this.platformID = platformID;
     }
 
-    public ArrayList<String> getWishlist() {
+    public List<String> getWishlist() {
         return wishlist;
     }
 
-    public void setWishlist(ArrayList<String> wishlist) {
+    public void setWishlist(List<String> wishlist) {
         this.wishlist = wishlist;
     }
 
-    public void addToWishlist(String item) { this.wishlist.add(item); }
+    public void addToWishlist(String item) {
+        if(item.contains(",")) {
+            String[] elements = item.split(",");
+            List<String> fixedLenghtList = Arrays.asList(elements);
+            this.wishlist = new ArrayList<>(fixedLenghtList);
+        } else {
+            this.wishlist.add(item);
+        }
+    }
 
     public void clearWishlist() { this.wishlist.clear(); }
 

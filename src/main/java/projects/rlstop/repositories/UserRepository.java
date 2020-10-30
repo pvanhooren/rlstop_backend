@@ -1,7 +1,7 @@
-package projects.rlstop.Repositories;
+package projects.rlstop.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import projects.rlstop.Models.Database.User;
+import projects.rlstop.models.database.User;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
     Iterable<User> findAllByPlatform(String Platform);

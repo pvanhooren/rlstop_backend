@@ -1,6 +1,4 @@
-package projects.rlstop.Models.Database;
-
-import com.sun.istack.NotNull;
+package projects.rlstop.models.database;
 
 import javax.persistence.*;
 
@@ -9,7 +7,6 @@ import javax.persistence.*;
 public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @NotNull
     @Column(name="post_id")
     private int postId;
 

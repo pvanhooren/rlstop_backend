@@ -2,8 +2,8 @@ package projects.rlstop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import projects.rlstop.Models.Database.Trade;
-import projects.rlstop.Models.Database.User;
+import projects.rlstop.models.database.Trade;
+import projects.rlstop.models.database.User;
 
 import java.util.Objects;
 
