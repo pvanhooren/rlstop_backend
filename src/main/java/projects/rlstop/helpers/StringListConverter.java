@@ -12,7 +12,10 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
     @Override
     public String convertToDatabaseColumn(List<String> list) {
         // Java 8
-        return String.join(",", list);
+        if(!list.isEmpty()) {
+            return String.join(",", list);
+        }
+        return "";
     }
 
     @Override

@@ -55,7 +55,6 @@ public class User {
     }
 
     public User() {
-
     }
 
     public int getUserId() {
@@ -114,11 +113,17 @@ public class User {
         this.wishlist = wishlist;
     }
 
+
     public void addToWishlist(String item) {
+        if(this.wishlist.get(0).equals("")){
+            this.clearWishlist();
+        }
+
         if(item.contains(",")) {
             String[] elements = item.split(",");
-            List<String> fixedLenghtList = Arrays.asList(elements);
-            this.wishlist = new ArrayList<>(fixedLenghtList);
+            for(String s : elements){
+                this.wishlist.add(s);
+            }
         } else {
             this.wishlist.add(item);
         }

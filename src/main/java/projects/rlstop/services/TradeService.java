@@ -8,6 +8,7 @@ import projects.rlstop.repositories.TradeRepository;
 import projects.rlstop.repositories.UserRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,22 +19,20 @@ public class TradeService {
     @Autowired
     private UserRepository userRepository;
 
-    public ArrayList<Trade> getAllTrades(){
+    public List<Trade> getAllTrades(){
         Iterable<Trade> itrades = tradeRepository.findAll();
         ArrayList<Trade> trades = new ArrayList<>();
 
         for(Trade trade : itrades){
             Optional<User> user = userRepository.findById(trade.getUser().getUserId());
-            if(user.isPresent()) {
-                trade.setUser(user.get());
-            }
+            user.ifPresent(trade::setUser);
             trades.add(trade);
         }
 
         return trades;
     }
 
-    public ArrayList<Trade> getTradesByUser(int id){
+    public List<Trade> getTradesByUser(int id){
         ArrayList<Trade> trades = new ArrayList<>();
 
         Optional<User> user = userRepository.findById(id);
@@ -43,37 +42,31 @@ public class TradeService {
 
             for (Trade trade : allTrades) {
                 Optional<User> user2 = userRepository.findById(trade.getUser().getUserId());
-                if (user2.isPresent()) {
-                    trade.setUser(user2.get());
-                }
+                user2.ifPresent(trade::setUser);
                 trades.add(trade);
             }
         }
         return trades;
     }
 
-    public ArrayList<Trade> getTradesByPlatform(String platform){
+    public List<Trade> getTradesByPlatform(String platform){
         ArrayList<Trade> trades = new ArrayList<>();
-        if (!platform.equals("")) {
-            if (platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
+            if (!platform.equals("") && platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
                 Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatform(platform);
 
                 for (Trade trade : allTrades) {
                     Optional<User> user = userRepository.findById(trade.getUser().getUserId());
-                    if (user.isPresent()) {
-                        trade.setUser(user.get());
-                    }
+                    user.ifPresent(trade::setUser);
                     trades.add(trade);
                 }
             }
-        }
 
         return trades;
     }
 
-    public Trade getTradeById(int Id){
+    public Trade getTradeById(int id){
         Trade trade;
-        Optional<Trade> optTrade = tradeRepository.findById(Id);
+        Optional<Trade> optTrade = tradeRepository.findById(id);
         if (optTrade.isPresent()) {
             trade = optTrade.get();
             Optional<User> user = userRepository.findById(trade.getUser().getUserId());
@@ -89,8 +82,8 @@ public class TradeService {
         return trade;
     }
 
-    public boolean deleteTrade(int Id){
-        Optional<Trade> trade = tradeRepository.findById(Id);
+    public boolean deleteTrade(int id){
+        Optional<Trade> trade = tradeRepository.findById(id);
         if (trade.isPresent()) {
             tradeRepository.delete(trade.get());
             return true;
@@ -103,15 +96,15 @@ public class TradeService {
         Optional<User> user = userRepository.findById(userId);
                 if (user.isPresent()) {
                     Trade trade = new Trade(wants, offers, user.get());
-                    Trade result = tradeRepository.save(trade);
-                    return result;
+                    tradeRepository.save(trade);
+                    return trade;
                 }
 
                 return null;
     }
 
-    public Trade updateTrade(int Id, String wants, String offers, int userId){
-        Optional<Trade> optTrade = tradeRepository.findById(Id);
+    public Trade updateTrade(int id, String wants, String offers, int userId){
+        Optional<Trade> optTrade = tradeRepository.findById(id);
         if (optTrade.isPresent()) {
             Trade trade = optTrade.get();
             if (wants != null && !wants.isEmpty()) {
@@ -122,9 +115,7 @@ public class TradeService {
             }
             if (userId != 0) {
                 Optional<User> user = userRepository.findById(userId);
-                if (user.isPresent()) {
-                    trade.setUser(user.get());
-                }
+                user.ifPresent(trade::setUser);
                 tradeRepository.save(trade);
                 return trade;
             }
