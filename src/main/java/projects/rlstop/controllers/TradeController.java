@@ -29,21 +29,21 @@ public class TradeController {
         if(trades.isEmpty()){
             return new ResponseEntity<>("There are currently no complete trades in the database", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(trades, HttpStatus.FOUND);
+        return new ResponseEntity<>(trades, HttpStatus.OK);
     }
 
     @GetMapping(path = "/user")
     public @ResponseBody ResponseEntity<List<Trade>> getTradesByUser(@RequestParam int id){
         List<Trade> trades = tradeService.getTradesByUser(id);
 
-        return new ResponseEntity<>(trades, HttpStatus.FOUND);
+        return new ResponseEntity<>(trades, HttpStatus.OK);
     }
 
     @GetMapping(path = "/filter")
     public @ResponseBody ResponseEntity<List<Trade>> getTradesByPlatform(@RequestParam String platform) {
         List<Trade> trades = tradeService.getTradesByPlatform(platform);
 
-        return new ResponseEntity<>(trades, HttpStatus.FOUND);
+        return new ResponseEntity<>(trades, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
@@ -51,7 +51,7 @@ public class TradeController {
         Trade trade = tradeService.getTradeById(id);
 
             if(trade !=null){
-                return new ResponseEntity<>(trade, HttpStatus.FOUND);
+                return new ResponseEntity<>(trade, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Please provide a valid trade ID.", HttpStatus.NOT_FOUND);
         }
@@ -74,7 +74,7 @@ public class TradeController {
                 Trade result = tradeService.createTrade(wants, offers, userId);
 
                 if(result!=null) {
-                    return new ResponseEntity<>(result, HttpStatus.CREATED);
+                    return new ResponseEntity<>(result, HttpStatus.OK);
                 } else{
                     return new ResponseEntity<>("The trade can not be added because the linked user doesn't exist", HttpStatus.CONFLICT);
                 }

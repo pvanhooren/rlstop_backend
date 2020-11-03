@@ -1,7 +1,5 @@
 package projects.rlstop.models.database;
 
-
-
 import projects.rlstop.helpers.StringListConverter;
 
 import javax.persistence.*;

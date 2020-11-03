@@ -76,7 +76,7 @@ public class UserService {
                 user.setPlatform(platform);
             }
             if (platformID != null && !platformID.isEmpty()) {
-                user.setUserName(platformID);
+                user.setPlatformID(platformID);
             }
             userRepository.save(user);
             return user;

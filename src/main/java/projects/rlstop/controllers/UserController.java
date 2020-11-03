@@ -30,14 +30,14 @@ public class UserController {
             return new ResponseEntity<>("There are currently no users in the database.", HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(users, HttpStatus.FOUND);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping(path="/filter")
     public @ResponseBody ResponseEntity<List<User>> getUsersByPlatform(@RequestParam String platform){
         List<User> users = userService.getUsersByPlatform(platform);
 
-        return new ResponseEntity<>(users, HttpStatus.FOUND);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
@@ -45,7 +45,7 @@ public class UserController {
         User user = userService.getUserById(id);
 
         if(user != null){
-            return new ResponseEntity<>(user, HttpStatus.FOUND);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Please provide a valid user ID", HttpStatus.NOT_FOUND);
         }
@@ -67,14 +67,14 @@ public class UserController {
         if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && !platform.isEmpty() && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             User result = userService.createUser(name, email, password, platform, platformID, wishlist);
 
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("The user can not be added because it is not complete", HttpStatus.CONFLICT);
     }
 
     @PutMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Object> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID) {
+    public @ResponseBody ResponseEntity<Object> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID) {
         User user = userService.updateUser(id, name, email, platform, platformID);
 
         if(user != null){
