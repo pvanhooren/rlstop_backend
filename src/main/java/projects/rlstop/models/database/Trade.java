@@ -1,20 +1,24 @@
 package projects.rlstop.models.database;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "posts")
 public class Trade {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="post_id")
-    private int postId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="trade_id")
+    private int tradeId;
 
     @Column(name="wants")
     private String wants;
 
     @Column(name="offers")
     private String offers;
+
+    @Column(name="date_last_modified")
+    private LocalDateTime lastModified;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,12 +34,12 @@ public class Trade {
 
     }
 
-    public int getPostId() {
-        return postId;
+    public int getTradeId() {
+        return tradeId;
     }
 
-    public void setPostId(int postId) {
-        this.postId = postId;
+    public void setTradeId(int postId) {
+        this.tradeId = postId;
     }
 
     public String getOffers() {
@@ -54,6 +58,14 @@ public class Trade {
         this.wants = wants;
     }
 
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
     public User getUser() { return user; }
 
     public void setUser(User user) { this.user = user; }
@@ -63,7 +75,7 @@ public class Trade {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Trade trade = (Trade) o;
-        return postId == trade.getPostId();
+        return tradeId == trade.getTradeId();
     }
 
     @Override
@@ -73,7 +85,7 @@ public class Trade {
 
     @Override
     public String toString() {
-        return "Post (" + postId + ") {" + "\n" +
+        return "Post (" + tradeId + ") {" + "\n" +
                 user.getUserName() + "\n" +
                 "Wants: " + wants + "\n" +
                 "Offers: " + offers + "\n" +

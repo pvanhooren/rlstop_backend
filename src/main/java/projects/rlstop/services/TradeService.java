@@ -7,6 +7,7 @@ import projects.rlstop.models.database.User;
 import projects.rlstop.repositories.TradeRepository;
 import projects.rlstop.repositories.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,10 +93,11 @@ public class TradeService {
         return false;
     }
 
-    public Trade createTrade(String wants, String offers, int userId){
+    public Trade createTrade(Trade trade, int userId){
         Optional<User> user = userRepository.findById(userId);
                 if (user.isPresent()) {
-                    Trade trade = new Trade(wants, offers, user.get());
+                    trade.setLastModified(LocalDateTime.now());
+                    trade.setUser(user.get());
                     tradeRepository.save(trade);
                     return trade;
                 }
@@ -116,6 +118,7 @@ public class TradeService {
             if (userId != 0) {
                 Optional<User> user = userRepository.findById(userId);
                 user.ifPresent(trade::setUser);
+                trade.setLastModified(LocalDateTime.now());
                 tradeRepository.save(trade);
                 return trade;
             }

@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -65,7 +65,8 @@ public class UserController {
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<Object> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
         if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && !platform.isEmpty() && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
-            User result = userService.createUser(name, email, password, platform, platformID, wishlist);
+            User user = new User(name, email, password, platform, platformID, wishlist);
+            User result = userService.createUser(user);
 
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -81,16 +82,6 @@ public class UserController {
             return new ResponseEntity<>(user, HttpStatus.OK) ;
         }
         return new ResponseEntity<>("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
-    }
-
-    @PutMapping(path = "/{id}/password")
-    public @ResponseBody ResponseEntity<Object> changePassword(@PathVariable int id, @RequestParam String oldPassword, @RequestParam String newPassword){
-        User user = userService.changePassword(id, oldPassword, newPassword);
-
-        if(user!=null){
-           return new ResponseEntity<>(user, HttpStatus.OK);
-        }
-        return new ResponseEntity<>("The password was not changed because the old password was incorrect", HttpStatus.CONFLICT);
     }
 
     @PutMapping(path = "/{id}/add/{item}")

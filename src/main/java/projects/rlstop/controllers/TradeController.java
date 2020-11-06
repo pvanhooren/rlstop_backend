@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 @Controller
 @RequestMapping("/trades")
 public class TradeController {
@@ -71,7 +71,8 @@ public class TradeController {
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<Object> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
             if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
-                Trade result = tradeService.createTrade(wants, offers, userId);
+                Trade trade = new Trade(wants, offers, null);
+                Trade result = tradeService.createTrade(trade, userId);
 
                 if(result!=null) {
                     return new ResponseEntity<>(result, HttpStatus.OK);

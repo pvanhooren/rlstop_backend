@@ -7,7 +7,6 @@ import projects.rlstop.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -56,8 +55,7 @@ public class UserService {
         return false;
     }
 
-    public User createUser(String name, String email, String password, String platform, String platformID, String wishlist){
-        User user = new User(name, email, password, platform, platformID, wishlist);
+    public User createUser(User user){
         userRepository.save(user);
         return user;
     }
@@ -82,22 +80,6 @@ public class UserService {
             return user;
         }
 
-        return null;
-    }
-
-    public User changePassword(int id, String oldPassword, String newPassword){
-        Optional<User> optUser = userRepository.findById(id);
-        if(optUser.isPresent()) {
-            User user = optUser.get();
-
-            if (Objects.hash(oldPassword) == (user.getPasswordHash())) {
-                if (newPassword != null && !newPassword.isEmpty()) {
-                    user.setPasswordHash(Objects.hash(newPassword));
-                }
-                userRepository.save(user);
-                return user;
-            }
-        }
         return null;
     }
 

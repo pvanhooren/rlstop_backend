@@ -5,4 +5,6 @@ import projects.rlstop.models.database.User;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
     Iterable<User> findAllByPlatform(String platform);
+
+    User findByEmailAddress(String emailAddress);
 }
