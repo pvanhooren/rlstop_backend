@@ -8,18 +8,37 @@ import java.util.List;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.models.database.User;
 
 @SpringBootTest
 class UserTests {
 
     @Test
-    void hashPasswordTest() {
+    void setPasswordHashTest(){
+        //Arrange
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        User user = new User("a", "a","a","a","a","a");
+        String expected = "pimpas";
+
         //Act
-        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-0123-4567-8910", "Party Time");
+        user.setPasswordHash("pimpas");
 
         //Assert
-        assertEquals(Objects.hash("12345zes"), user.getPasswordHash());
+        assertEquals(true, encoder.matches(expected, user.getPasswordHash()));
+    }
+
+    @Test
+    void hashPasswordTest(){
+        //Arrange
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String expected = "pimpas";
+
+        //Act
+        User user = new User("a", "a","pimpas","a","a","a");
+
+        //Assert
+        assertEquals(true, encoder.matches(expected, user.getPasswordHash()));
     }
 
     @Test
