@@ -3,8 +3,10 @@ package projects.rlstop.repositories;
 import org.springframework.data.repository.CrudRepository;
 import projects.rlstop.models.database.User;
 
+import java.util.Optional;
+
 public interface UserRepository extends CrudRepository<User, Integer> {
     Iterable<User> findAllByPlatform(String platform);
 
-    User findByEmailAddress(String emailAddress);
+    Optional<User> findByUserName(String userName);
 }

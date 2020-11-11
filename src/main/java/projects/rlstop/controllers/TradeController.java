@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/trades")
 public class TradeController {
@@ -72,7 +72,7 @@ public class TradeController {
     public @ResponseBody ResponseEntity<Object> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
             if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
                 Trade trade = new Trade(wants, offers, null);
-                Trade result = tradeService.createTrade(trade, userId);
+                Trade result = tradeService.saveTrade(trade, userId);
 
                 if(result!=null) {
                     return new ResponseEntity<>(result, HttpStatus.OK);
@@ -86,10 +86,21 @@ public class TradeController {
 
     @PutMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<Object> updateTrade(@PathVariable int id, @RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
-        Trade trade = tradeService.updateTrade(id, wants, offers, userId);
+        Trade trade = tradeService.getTradeById(id);
 
-        if(trade != null) {
-            return new ResponseEntity<>(trade, HttpStatus.OK);
+        if(trade!=null) {
+            if (wants != null && !wants.isEmpty()) {
+                trade.setWants(wants);
+            }
+            if (offers != null && !offers.isEmpty()) {
+                trade.setOffers(offers);
+            }
+        }
+
+        Trade result = tradeService.saveTrade(trade, userId);
+
+        if(result != null) {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("The trade was not updated because it was not complete.", HttpStatus.NOT_MODIFIED);

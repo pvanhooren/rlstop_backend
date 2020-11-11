@@ -45,6 +45,11 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public User getUserByUserName(String userName){
+        Optional<User> user = userRepository.findByUserName(userName);
+        return user.orElse(null);
+    }
+
     public boolean deleteUser(int id){
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
@@ -55,32 +60,9 @@ public class UserService {
         return false;
     }
 
-    public User createUser(User user){
+    public User saveUser(User user){
         userRepository.save(user);
         return user;
-    }
-
-    public User updateUser(int id, String name, String email, String platform, String platformID){
-        Optional<User> optUser = userRepository.findById(id);
-        if(optUser.isPresent()) {
-            User user = optUser.get();
-            if (name != null && !name.isEmpty()) {
-                user.setUserName(name);
-            }
-            if (email != null && !email.isEmpty()) {
-                user.setEmailAddress(email);
-            }
-            if (platform != null && !platform.isEmpty()) {
-                user.setPlatform(platform);
-            }
-            if (platformID != null && !platformID.isEmpty()) {
-                user.setPlatformID(platformID);
-            }
-            userRepository.save(user);
-            return user;
-        }
-
-        return null;
     }
 
     public User addToWishlist(int id, String item){

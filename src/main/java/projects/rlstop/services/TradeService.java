@@ -93,7 +93,7 @@ public class TradeService {
         return false;
     }
 
-    public Trade createTrade(Trade trade, int userId){
+    public Trade saveTrade(Trade trade, int userId){
         Optional<User> user = userRepository.findById(userId);
                 if (user.isPresent()) {
                     trade.setLastModified(LocalDateTime.now());
@@ -103,27 +103,6 @@ public class TradeService {
                 }
 
                 return null;
-    }
-
-    public Trade updateTrade(int id, String wants, String offers, int userId){
-        Optional<Trade> optTrade = tradeRepository.findById(id);
-        if (optTrade.isPresent()) {
-            Trade trade = optTrade.get();
-            if (wants != null && !wants.isEmpty()) {
-                trade.setWants(wants);
-            }
-            if (offers != null && !offers.isEmpty()) {
-                trade.setOffers(offers);
-            }
-            if (userId != 0) {
-                Optional<User> user = userRepository.findById(userId);
-                user.ifPresent(trade::setUser);
-                trade.setLastModified(LocalDateTime.now());
-                tradeRepository.save(trade);
-                return trade;
-            }
-        }
-        return null;
     }
 
 }

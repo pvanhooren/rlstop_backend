@@ -1,12 +1,12 @@
 package projects.rlstop.models.database;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.helpers.StringListConverter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -23,7 +23,7 @@ public class User {
     private String emailAddress;
 
     @Column(name="password_hash")
-    private int passwordHash;
+    private String passwordHash;
 
     @Column(name="platform")
     private String platform;
@@ -37,9 +37,10 @@ public class User {
 
 
     public User(String userName, String emailAddress, String password, String platform, String platformID, String wishlist){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.userName = userName;
         this.emailAddress = emailAddress;
-        this.passwordHash = Objects.hash(password);
+        this.passwordHash = encoder.encode(password);
         this.platform = platform;
         this.platformID = platformID;
 
@@ -79,12 +80,13 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    public int getPasswordHash() {
+    public String getPasswordHash() {
         return passwordHash;
     }
 
-    public void setPasswordHash(int passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPasswordHash(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.passwordHash = encoder.encode(password);
     }
 
     public String getPlatform() {

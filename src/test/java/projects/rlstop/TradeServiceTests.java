@@ -162,57 +162,27 @@ class TradeServiceTests {
     }
 
     @Test
-    void createTradeTest(){
+    void saveTradeTest(){
         //Arrange
         user2.setUserId(2);
         when(tradeRepository.save(trade2)).thenReturn(trade2);
         when(userRepository.findById(2)).thenReturn(Optional.ofNullable(user2));
 
         //Act
-        Trade actual = tradeService.createTrade(trade2, 2);
+        Trade actual = tradeService.saveTrade(trade2, 2);
 
         //Assert
         assertEquals(trade2, actual);
     }
 
     @Test
-    void createTradeTest2(){
+    void saveTradeTest2(){
         //Arrange
         when(tradeRepository.save(trade2)).thenReturn(trade2);
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
         //Act
-        Trade actual = tradeService.createTrade(trade2, 2);
-
-        //Assert
-        assertEquals(null, actual);
-    }
-
-    @Test
-    void updateTradeTest(){
-        //Arrange
-        user3.setUserId(3);
-        trade3.setTradeId(3);
-        when(tradeRepository.save(trade3)).thenReturn(trade3);
-        when(tradeRepository.findById(3)).thenReturn(Optional.ofNullable(trade3));
-        when(userRepository.findById(3)).thenReturn(Optional.ofNullable(user3));
-
-        //Act
-        Trade actual = tradeService.updateTrade(3, "Fennec", "Imperator DT5", 3);
-
-        //Assert
-        assertEquals(trade3, actual);
-    }
-
-    @Test
-    void updateTradeTest2(){
-        //Arrange
-        when(tradeRepository.save(trade3)).thenReturn(trade3);
-        when(tradeRepository.findById(3)).thenReturn(Optional.empty());
-        when(userRepository.findById(3)).thenReturn(Optional.empty());
-
-        //Act
-        Trade actual = tradeService.updateTrade(3, "Fennec", "Imperator DT5", 3);
+        Trade actual = tradeService.saveTrade(trade2, 2);
 
         //Assert
         assertEquals(null, actual);

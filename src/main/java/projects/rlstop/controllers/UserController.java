@@ -12,7 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -66,7 +66,7 @@ public class UserController {
     public @ResponseBody ResponseEntity<Object> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
         if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && !platform.isEmpty() && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             User user = new User(name, email, password, platform, platformID, wishlist);
-            User result = userService.createUser(user);
+            User result = userService.saveUser(user);
 
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -76,10 +76,29 @@ public class UserController {
 
     @PutMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<Object> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID) {
-        User user = userService.updateUser(id, name, email, platform, platformID);
+        User user = userService.getUserById(id);
 
         if(user != null){
-            return new ResponseEntity<>(user, HttpStatus.OK) ;
+            if (name != null && !name.isEmpty()) {
+                user.setUserName(name);
+            }
+            if (email != null && !email.isEmpty()) {
+                user.setEmailAddress(email);
+            }
+            if (platform != null && !platform.isEmpty()) {
+                user.setPlatform(platform);
+            }
+            if (platformID != null && !platformID.isEmpty()) {
+                user.setPlatformID(platformID);
+            }
+        } else {
+            return new ResponseEntity<>("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        User result = userService.saveUser(user);
+
+        if(result != null){
+            return new ResponseEntity<>(result, HttpStatus.OK) ;
         }
         return new ResponseEntity<>("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
     }

@@ -90,6 +90,30 @@ class UserServiceTests {
     }
 
     @Test
+    void getUserByUserNameTest(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.ofNullable(user1));
+
+        //Act
+        User user = userService.getUserByUserName("Pjuim");
+
+        //Assert
+        assertEquals(user1, user);
+    }
+
+    @Test
+    void getUserByUserNameTest2(){
+        //Arrange
+        when(userRepository.findByUserName("JonSandman")).thenReturn(Optional.empty());
+
+        //Act
+        User user = userService.getUserByUserName("JonSandman");
+
+        //Assert
+        assertEquals(null, user);
+    }
+
+    @Test
     void deleteUserTest(){
         //Arrange
         when(userRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(user1));
@@ -114,41 +138,15 @@ class UserServiceTests {
     }
 
     @Test
-    void createUserTest(){
+    void saveUserTest(){
         //Arrange
         when(userRepository.save(user2)).thenReturn(user2);
 
         //Act
-        User actual = userService.createUser(user2);
+        User actual = userService.saveUser(user2);
 
         //Assert
         assertEquals(user2, actual);
-    }
-
-    @Test
-    void updateUserTest(){
-        //Arrange
-        user3.setUserId(3);
-        when(userRepository.save(user3)).thenReturn(user3);
-        when(userRepository.findById(3)).thenReturn(Optional.ofNullable(user3));
-
-        //Act
-        User actual = userService.updateUser(3, "yourivdloo", "youri.yvdl@gmail.com", "PC", "yourivdloo");
-
-        //Assert
-        assertEquals(user3, actual);
-    }
-
-    @Test
-    void updateUserTest2(){
-        //Arrange
-        when(userRepository.findById(4)).thenReturn(Optional.empty());
-
-        //Act
-        User actual = userService.updateUser(4, "JonSandman", "mrsandman@gmail.com", "PC", "jonsandman");
-
-        //Assert
-        assertEquals(null, actual);
     }
 
     @Test
