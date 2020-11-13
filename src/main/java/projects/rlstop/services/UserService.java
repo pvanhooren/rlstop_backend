@@ -3,6 +3,7 @@ package projects.rlstop.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -25,11 +26,11 @@ public class UserService {
         return users;
     }
 
-    public List<User> getUsersByPlatform(String platform){
+    public List<User> getUsersByPlatform(Platform platform){
         ArrayList<User> users = new ArrayList<>();
 
-            if (!platform.equals("") && platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
-                Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
+                if(platform!=null){
+                    Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
                 for(User user : usersIterable){
                     if(user !=null) {
                         users.add(user);

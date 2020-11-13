@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.UserRepository;
 import projects.rlstop.services.UserService;
 
@@ -24,9 +25,9 @@ class UserServiceTests {
     @InjectMocks
     UserService userService;
 
-    User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-1111-2222-3333", "Party Time,Emeralds");
-    User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", "NintendoSwitch", "SW-1234-5678-9000", "Dissolver");
-    User user3 = new User("yourivdloo", "youri.yvdl@gmail.com", "yourivdloo", "PC", "yourivdloo", "Fennec");
+    User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-1111-2222-3333", "Party Time,Emeralds");
+    User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", Platform.NINTENDOSWITCH, "SW-1234-5678-9000", "Dissolver");
+    User user3 = new User("yourivdloo", "youri.yvdl@gmail.com", "yourivdloo", Platform.PC, "yourivdloo", "Fennec");
 
     @Test
     void getAllUsersTest(){
@@ -56,10 +57,10 @@ class UserServiceTests {
         users.add(user1);
         users.add(user2);
 
-        when(userRepository.findAllByPlatform("NintendoSwitch")).thenReturn(users);
+        when(userRepository.findAllByPlatform(Platform.NINTENDOSWITCH)).thenReturn(users);
 
         //Act
-        List<User> actual = userService.getUsersByPlatform("NintendoSwitch");
+        List<User> actual = userService.getUsersByPlatform(Platform.NINTENDOSWITCH);
 
         //Assert
         assertEquals(users, actual);

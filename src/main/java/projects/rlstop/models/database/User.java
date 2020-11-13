@@ -1,11 +1,15 @@
 package projects.rlstop.models.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.helpers.StringListConverter;
+import projects.rlstop.models.enums.Platform;
+import projects.rlstop.models.enums.UserRole;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -26,23 +30,35 @@ public class User {
     private String passwordHash;
 
     @Column(name="platform")
-    private String platform;
+    @Enumerated(EnumType.ORDINAL)
+    private Platform platform;
 
     @Column(name="platformid")
     private String platformID;
+
+    @Column(name="active")
+    private boolean active;
 
     @Convert(converter = StringListConverter.class)
     @Column(name="wishlist")
     private List<String> wishlist = new ArrayList<>();
 
+    @JsonIgnore
+    @ManyToMany(cascade=CascadeType.ALL)
+    @JoinTable(name="user_roles",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") })
+    private Collection<Role> data = new ArrayList<>();
 
-    public User(String userName, String emailAddress, String password, String platform, String platformID, String wishlist){
+    public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.userName = userName;
         this.emailAddress = emailAddress;
         this.passwordHash = encoder.encode(password);
         this.platform = platform;
         this.platformID = platformID;
+        this.active = true;
+        data.add(new Role(UserRole.ROLE_USER));
 
         if(wishlist.contains(",")) {
             String[] elements = wishlist.split(",");
@@ -89,11 +105,11 @@ public class User {
         this.passwordHash = encoder.encode(password);
     }
 
-    public String getPlatform() {
+    public Platform getPlatform() {
         return platform;
     }
 
-    public void setPlatform(String platform) {
+    public void setPlatform(Platform platform) {
         this.platform = platform;
     }
 
@@ -105,6 +121,10 @@ public class User {
         this.platformID = platformID;
     }
 
+    public boolean getActive(){ return this.active;}
+
+    public void setActive(boolean active) { this.active = active; }
+
     public List<String> getWishlist() {
         return wishlist;
     }
@@ -112,7 +132,6 @@ public class User {
     public void setWishlist(List<String> wishlist) {
         this.wishlist = wishlist;
     }
-
 
     public void addToWishlist(String item) {
         if(this.wishlist.get(0).equals("")){
@@ -132,6 +151,18 @@ public class User {
     public void clearWishlist() { this.wishlist.clear(); }
 
     public void removeFromWishlist(String item) { this.wishlist.remove(item); }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public Collection<Role> getData() {
+        return data;
+    }
+
+    public void setData(Collection<Role> data) {
+        this.data = data;
+    }
 
     @Override
     public boolean equals(Object o) {

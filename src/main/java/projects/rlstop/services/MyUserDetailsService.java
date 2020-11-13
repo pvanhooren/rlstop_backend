@@ -17,13 +17,16 @@ public class MyUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) {
         Optional<User> user = userRepository.findByUserName(userName);
 
-        user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + userName));
+        if(user.isPresent()){
+            var mapped = user.map(MyUserDetails::new);
+            if(mapped.isPresent()){ return mapped.get(); }
+        } else {
+            throw new UsernameNotFoundException("Not found: " + userName);
+        }
 
-        return user.map(MyUserDetails::new).get();
-//        User user = new User("John", "john@gmail.com", "pass123", "PC", "johnnyboy", "niks");
-//        return new MyUserDetails(user);
+        return null;
     }
 }

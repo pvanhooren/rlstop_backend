@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 
 @SpringBootTest
 class UserTests {
@@ -18,7 +19,7 @@ class UserTests {
     void setPasswordHashTest(){
         //Arrange
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        User user = new User("a", "a","a","a","a","a");
+        User user = new User("a", "a","a", Platform.PC,"a","a");
         String expected = "pimpas";
 
         //Act
@@ -35,7 +36,7 @@ class UserTests {
         String expected = "pimpas";
 
         //Act
-        User user = new User("a", "a","pimpas","a","a","a");
+        User user = new User("a", "a","pimpas",Platform.PC,"a","a");
 
         //Assert
         assertEquals(true, encoder.matches(expected, user.getPasswordHash()));
@@ -44,7 +45,7 @@ class UserTests {
     @Test
     void createUserTest(){
         //Act
-        User user = new User("Kaasje", "koen@gmail.com", "kaasje123", "PlayStation", "hutskoen", "Road Hog XL");
+        User user = new User("Kaasje", "koen@gmail.com", "kaasje123", Platform.PLAYSTATION, "hutskoen", "Road Hog XL");
 
         //Assert
         assertEquals("Kaasje", user.getUserName());
@@ -53,7 +54,7 @@ class UserTests {
     @Test
     void addToWishlistTest(){
         //Arrange
-        User user = new User("Fifalosophy", "matthy@gmail.com", "duimpiee", "XBox", "matthyas", "Tidal Stream");
+        User user = new User("Fifalosophy", "matthy@gmail.com", "duimpiee", Platform.XBOX, "matthyas", "Tidal Stream");
 
         //Act
         user.addToWishlist("20XX");
@@ -65,7 +66,7 @@ class UserTests {
     @Test
     void multiWishlistTest(){
         //Act
-        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-0123-4567-8910", "Party Time,Emeralds");
+        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-0123-4567-8910", "Party Time,Emeralds");
         user.addToWishlist("Dot Rush,RLCS X Fennec");
 
         List<String> expected = new ArrayList<>();
@@ -81,7 +82,7 @@ class UserTests {
     @Test
     void removeFromWishlist(){
         //Arrange
-        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-0123-4567-8910", "Party Time,Emeralds");
+        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-0123-4567-8910", "Party Time,Emeralds");
         List<String> expected = new ArrayList<>();
         expected.add("Emeralds");
 
@@ -95,7 +96,7 @@ class UserTests {
     @Test
     void clearWishlist(){
         //Arrange
-        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-0123-4567-8910", "Party Time,Emeralds");
+        User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-0123-4567-8910", "Party Time,Emeralds");
         List<String> expected = new ArrayList<>();
 
         //Act

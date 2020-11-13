@@ -6,10 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import projects.rlstop.models.database.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MyUserDetails implements UserDetails {
 
@@ -22,9 +20,7 @@ public class MyUserDetails implements UserDetails {
         this.userName = user.getUserName();
         this.password = user.getPasswordHash();
         this.active = true;
-//        this.authorities = Arrays.stream(user.getRoles().split(","))
-//                .map(SimpleGrantedAuthority::new)
-//                .collect(Collectors.toList());
+
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("USER"));
         this.authorities = roles;

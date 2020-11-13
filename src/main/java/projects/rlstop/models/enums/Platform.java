@@ -1,4 +1,4 @@
-package projects.rlstop.models;
+package projects.rlstop.models.enums;
 
 public enum Platform {
     NINTENDOSWITCH,

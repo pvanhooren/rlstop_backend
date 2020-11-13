@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.TradeRepository;
 import projects.rlstop.repositories.UserRepository;
 import projects.rlstop.services.TradeService;
@@ -29,9 +30,9 @@ class TradeServiceTests {
     @InjectMocks
     TradeService tradeService;
 
-    User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", "NintendoSwitch", "SW-1111-2222-3333", "Party Time,Emeralds");
-    User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", "NintendoSwitch", "SW-1234-5678-9000", "Dissolver");
-    User user3 = new User("yourivdloo", "youri.yvdl@gmail.com", "yourivdloo", "PC", "yourivdloo", "Fennec");
+    User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-1111-2222-3333", "Party Time,Emeralds");
+    User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", Platform.NINTENDOSWITCH, "SW-1234-5678-9000", "Dissolver");
+    User user3 = new User("yourivdloo", "youri.yvdl@gmail.com", "yourivdloo", Platform.PC, "yourivdloo", "Fennec");
 
     Trade trade1 = new Trade("Octane: Dot Rush", "50c", user1);
     Trade trade2 = new Trade("Stipple Gait", "Storm Watch + Chameleon", user2);
@@ -87,12 +88,12 @@ class TradeServiceTests {
         tradesOnSwitch.add(trade1);
         tradesOnSwitch.add(trade2);
 
-        when(tradeRepository.findAllByUserPlatform("NintendoSwitch")).thenReturn(tradesOnSwitch);
+        when(tradeRepository.findAllByUserPlatform(Platform.NINTENDOSWITCH)).thenReturn(tradesOnSwitch);
         when(userRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(user1));
         when(userRepository.findById(2)).thenReturn(java.util.Optional.ofNullable(user2));
 
         //Act
-        List<Trade> actual = tradeService.getTradesByPlatform("NintendoSwitch");
+        List<Trade> actual = tradeService.getTradesByPlatform(Platform.NINTENDOSWITCH);
 
         //Assert
         assertEquals(tradesOnSwitch, actual);

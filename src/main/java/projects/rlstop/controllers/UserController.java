@@ -5,14 +5,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.InternalServerException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.services.UserService;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
-@CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -23,31 +27,31 @@ public class UserController {
     private UserService userService;
 
     @GetMapping(path="/all")
-    public @ResponseBody ResponseEntity<Object> getAllUsers() {
+    public @ResponseBody ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
 
         if(users.isEmpty()){
-            return new ResponseEntity<>("There are currently no users in the database.", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("There are currently no users in the database.");
         }
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping(path="/filter")
-    public @ResponseBody ResponseEntity<List<User>> getUsersByPlatform(@RequestParam String platform){
+    public @ResponseBody ResponseEntity<List<User>> getUsersByPlatform(@RequestParam Platform platform){
         List<User> users = userService.getUsersByPlatform(platform);
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Object> getUserPath(@PathVariable int id) {
+    public @ResponseBody ResponseEntity<User> getUserPath(@PathVariable int id) {
         User user = userService.getUserById(id);
 
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Please provide a valid user ID", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("User was not found. Please provide a valid user ID");
         }
     }
 
@@ -58,24 +62,24 @@ public class UserController {
         if(successful){
             return new ResponseEntity<>("User has successfully been deleted.", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User doesn't exist. Might have already been deleted.", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("User doesn't exist. Might have already been deleted.");
         }
     }
 
     @PostMapping(path = "/new")
-    public @ResponseBody ResponseEntity<Object> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
-        if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && !platform.isEmpty() && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
+    public @ResponseBody ResponseEntity<User> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
+        if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             User user = new User(name, email, password, platform, platformID, wishlist);
             User result = userService.saveUser(user);
 
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("The user can not be added because it is not complete", HttpStatus.CONFLICT);
+        throw new BadRequestException("The user can not be added because it is not complete");
     }
 
     @PutMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Object> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String platform, @RequestParam(required= false) String platformID) {
+    public @ResponseBody ResponseEntity<User> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID) {
         User user = userService.getUserById(id);
 
         if(user != null){
@@ -85,14 +89,14 @@ public class UserController {
             if (email != null && !email.isEmpty()) {
                 user.setEmailAddress(email);
             }
-            if (platform != null && !platform.isEmpty()) {
+            if (platform != null) {
                 user.setPlatform(platform);
             }
             if (platformID != null && !platformID.isEmpty()) {
                 user.setPlatformID(platformID);
             }
         } else {
-            return new ResponseEntity<>("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("The user you are trying to update does not exist.");
         }
 
         User result = userService.saveUser(user);
@@ -100,7 +104,7 @@ public class UserController {
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK) ;
         }
-        return new ResponseEntity<>("The user you are trying to update does not exist.", HttpStatus.NOT_FOUND);
+        throw new BadRequestException("The user you are trying to update does not exist.");
     }
 
     @PutMapping(path = "/{id}/add/{item}")
@@ -110,7 +114,7 @@ public class UserController {
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
-        return null;
+        throw new InternalServerException("The item was not added, an error occured.");
     }
 
     @PutMapping(path = "/{id}/remove/{item}")
@@ -120,7 +124,7 @@ public class UserController {
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
-        return null;
+        throw new InternalServerException("The item was not removed, an error occured.");
     }
 
     @PutMapping(path = "/{id}/clear")
@@ -130,6 +134,6 @@ public class UserController {
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
-        return null;
+        throw new InternalServerException("The wishlist was not cleared, an error occured.");
     }
 }

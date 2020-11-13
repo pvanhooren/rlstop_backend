@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.database.User;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.TradeRepository;
 import projects.rlstop.repositories.UserRepository;
 
@@ -50,9 +51,10 @@ public class TradeService {
         return trades;
     }
 
-    public List<Trade> getTradesByPlatform(String platform){
+    public List<Trade> getTradesByPlatform(Platform platform){
         ArrayList<Trade> trades = new ArrayList<>();
-            if (!platform.equals("") && platform.equals("NintendoSwitch") || platform.equals("PlayStation") || platform.equals("XBox") || platform.equals("PC")) {
+
+        if(platform!=null){
                 Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatform(platform);
 
                 for (Trade trade : allTrades) {

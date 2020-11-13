@@ -6,8 +6,12 @@ build:
   script: "mvn compile"
   stage: build
 test:
+  dependencies:
+    - build
   script: "mvn test"
   stage: test
 sonarqube:
+  dependencies:
+    - test
   script: "mvn compile sonar:sonar"
   stage: sonarqube

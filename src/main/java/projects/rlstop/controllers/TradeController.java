@@ -5,14 +5,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.Trade;
+import projects.rlstop.models.enums.Platform;
 import projects.rlstop.services.TradeService;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/trades")
 public class TradeController {
@@ -23,11 +26,11 @@ public class TradeController {
     private TradeService tradeService;
 
     @GetMapping(path = "/all")
-    public @ResponseBody ResponseEntity<Object> getAllTrades() {
+    public @ResponseBody ResponseEntity<List<Trade>> getAllTrades() {
         List<Trade> trades = tradeService.getAllTrades();
 
         if(trades.isEmpty()){
-            return new ResponseEntity<>("There are currently no complete trades in the database", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("There are currently no complete trades in the database");
         }
         return new ResponseEntity<>(trades, HttpStatus.OK);
     }
@@ -40,20 +43,20 @@ public class TradeController {
     }
 
     @GetMapping(path = "/filter")
-    public @ResponseBody ResponseEntity<List<Trade>> getTradesByPlatform(@RequestParam String platform) {
+    public @ResponseBody ResponseEntity<List<Trade>> getTradesByPlatform(@RequestParam Platform platform) {
         List<Trade> trades = tradeService.getTradesByPlatform(platform);
 
         return new ResponseEntity<>(trades, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Object> getTradePath(@PathVariable int id) {
+    public @ResponseBody ResponseEntity<Trade> getTradePath(@PathVariable int id) {
         Trade trade = tradeService.getTradeById(id);
 
             if(trade !=null){
                 return new ResponseEntity<>(trade, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Please provide a valid trade ID.", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Trade was not found. Please provide a valid trade ID.");
         }
     }
 
@@ -64,12 +67,12 @@ public class TradeController {
         if(successful){
             return new ResponseEntity<>("Trade has successfully been deleted.", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Trade doesn't exist. Might have already been deleted.", HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Trade doesn't exist. Might have already been deleted.");
         }
     }
 
     @PostMapping(path = "/new")
-    public @ResponseBody ResponseEntity<Object> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
+    public @ResponseBody ResponseEntity<Trade> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
             if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
                 Trade trade = new Trade(wants, offers, null);
                 Trade result = tradeService.saveTrade(trade, userId);
@@ -77,15 +80,15 @@ public class TradeController {
                 if(result!=null) {
                     return new ResponseEntity<>(result, HttpStatus.OK);
                 } else{
-                    return new ResponseEntity<>("The trade can not be added because the linked user doesn't exist", HttpStatus.CONFLICT);
+                    throw new BadRequestException("The trade can not be added because the linked user doesn't exist");
                 }
             }
 
-        return new ResponseEntity<>("The trade can not be added because it is not complete", HttpStatus.CONFLICT);
+        throw new BadRequestException("The trade can not be added because it is not complete");
     }
 
     @PutMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Object> updateTrade(@PathVariable int id, @RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
+    public @ResponseBody ResponseEntity<Trade> updateTrade(@PathVariable int id, @RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
         Trade trade = tradeService.getTradeById(id);
 
         if(trade!=null) {
@@ -95,6 +98,8 @@ public class TradeController {
             if (offers != null && !offers.isEmpty()) {
                 trade.setOffers(offers);
             }
+        } else {
+            throw new NotFoundException("The trade was not updated because it does not exist.");
         }
 
         Trade result = tradeService.saveTrade(trade, userId);
@@ -103,7 +108,7 @@ public class TradeController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("The trade was not updated because it was not complete.", HttpStatus.NOT_MODIFIED);
+        throw new BadRequestException("The trade was not updated because it was not complete.");
     }
 
 }
