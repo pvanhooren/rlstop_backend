@@ -32,9 +32,7 @@ public class UserService {
                 if(platform!=null){
                     Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
                 for(User user : usersIterable){
-                    if(user !=null) {
                         users.add(user);
-                    }
                 }
             }
 

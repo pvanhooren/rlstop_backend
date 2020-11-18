@@ -82,6 +82,20 @@ class TradeServiceTests {
     }
 
     @Test
+    void getTradesByUserTest2(){
+        //Arrange
+        List<Trade> expected = new ArrayList<Trade>();
+
+        when(userRepository.findById(0)).thenReturn(Optional.empty());
+
+        //Act
+        List<Trade> actual = tradeService.getTradesByUser(0);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void getTradesByPlatformTest(){
         //Arrange
         List<Trade> tradesOnSwitch = new ArrayList<>();
@@ -97,6 +111,18 @@ class TradeServiceTests {
 
         //Assert
         assertEquals(tradesOnSwitch, actual);
+    }
+
+    @Test
+    void getTradesByPlatformTest2(){
+        //Arrange
+        List<Trade> expected = new ArrayList<Trade>();
+
+        //Act
+        List<Trade> actual = tradeService.getTradesByPlatform(null);
+
+        //Assert
+        assertEquals(expected, actual);
     }
 
     @Test

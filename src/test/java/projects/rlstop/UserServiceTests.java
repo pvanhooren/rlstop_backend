@@ -67,6 +67,18 @@ class UserServiceTests {
     }
 
     @Test
+    void getUsersByPlatformTest2(){
+        //Arrange
+        List<User> expected = new ArrayList<User>();
+
+        //Act
+        List<User> actual = userService.getUsersByPlatform(null);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void getUserByIdTest(){
         //Arrange
         when(userRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(user1));

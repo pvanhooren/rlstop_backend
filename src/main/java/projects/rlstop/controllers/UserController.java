@@ -45,13 +45,24 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<User> getUserPath(@PathVariable int id) {
+    public @ResponseBody ResponseEntity<User> getUserById(@PathVariable int id) {
         User user = userService.getUserById(id);
 
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
             throw new NotFoundException("User was not found. Please provide a valid user ID");
+        }
+    }
+
+    @GetMapping(path= "/name/{userName}")
+    public @ResponseBody ResponseEntity<User> getUserByUserName(@PathVariable String userName){
+        User user = userService.getUserByUserName(userName);
+
+        if(user != null){
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            throw new NotFoundException("User was not found. Please provide a valid username.");
         }
     }
 
@@ -104,7 +115,7 @@ public class UserController {
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK) ;
         }
-        throw new BadRequestException("The user you are trying to update does not exist.");
+        throw new BadRequestException("An error occurred trying to update the trade.");
     }
 
     @PutMapping(path = "/{id}/add/{item}")
@@ -114,7 +125,7 @@ public class UserController {
         if(user != null){
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
-        throw new InternalServerException("The item was not added, an error occured.");
+        throw new InternalServerException("The item was not added, an error occurred.");
     }
 
     @PutMapping(path = "/{id}/remove/{item}")

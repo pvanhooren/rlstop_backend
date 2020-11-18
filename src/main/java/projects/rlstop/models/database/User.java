@@ -46,8 +46,8 @@ public class User {
     @JsonIgnore
     @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="user_roles",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "role_id") })
+            joinColumns = { @JoinColumn(name = "userId") },
+            inverseJoinColumns = { @JoinColumn(name = "roleId") })
     private Collection<Role> data = new ArrayList<>();
 
     public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
