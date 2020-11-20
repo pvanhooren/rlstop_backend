@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RlstopApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(RlstopApplication.class, args);
+            SpringApplication.run(RlstopApplication.class, args);
     }
 }

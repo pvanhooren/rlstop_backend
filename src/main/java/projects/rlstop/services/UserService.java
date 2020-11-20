@@ -64,6 +64,29 @@ public class UserService {
         return user;
     }
 
+    public User updateUser(User user){
+        if(nameExist(user.getUserName())){
+            if(userRepository.findByUserName(user.getUserName()).get().getUserId() != user.getUserId()){
+                return null;
+            }
+        }
+
+        if(emailExist(user.getEmailAddress())){
+            if(userRepository.findByEmailAddress(user.getEmailAddress()).get().getUserId() != user.getUserId()){
+                return null;
+            }
+        }
+
+        return saveUser(user);
+    }
+
+    public User createUser(User user){
+        if(nameExist(user.getUserName()) || emailExist(user.getEmailAddress())){
+            return null;
+        }
+            return saveUser(user);
+    }
+
     public User addToWishlist(int id, String item){
         Optional<User> optUser = userRepository.findById(id);
         if(optUser.isPresent()) {
@@ -95,5 +118,13 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    private boolean emailExist(String email) {
+        return userRepository.findByEmailAddress(email).isPresent();
+    }
+
+    private boolean nameExist(String name){
+        return userRepository.findByUserName(name).isPresent();
     }
 }

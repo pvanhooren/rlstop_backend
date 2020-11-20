@@ -23,10 +23,7 @@ public class MyUserDetailsService implements UserDetailsService {
         if(user.isPresent()){
             var mapped = user.map(MyUserDetails::new);
             if(mapped.isPresent()){ return mapped.get(); }
-        } else {
-            throw new UsernameNotFoundException("Not found: " + userName);
         }
-
-        return null;
+        throw new UsernameNotFoundException("Not found: " + userName);
     }
 }

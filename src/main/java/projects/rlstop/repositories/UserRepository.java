@@ -10,4 +10,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     Iterable<User> findAllByPlatform(Platform platform);
 
     Optional<User> findByUserName(String userName);
+
+    Optional<User> findByEmailAddress(String emailAddress);
 }

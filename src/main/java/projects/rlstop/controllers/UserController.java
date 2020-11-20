@@ -81,7 +81,7 @@ public class UserController {
     public @ResponseBody ResponseEntity<User> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
         if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             User user = new User(name, email, password, platform, platformID, wishlist);
-            User result = userService.saveUser(user);
+            User result = userService.createUser(user);
 
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -110,7 +110,7 @@ public class UserController {
             throw new NotFoundException("The user you are trying to update does not exist.");
         }
 
-        User result = userService.saveUser(user);
+        User result = userService.updateUser(user);
 
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK) ;

@@ -163,6 +163,89 @@ class UserServiceTests {
     }
 
     @Test
+    void updateUserTest(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+
+        //Act
+        user1.setPlatformID("SW-0000-1111-2222");
+        User actual = userService.updateUser(user1);
+
+        //Assert
+        assertEquals(user1, actual);
+    }
+
+    @Test
+    void updateUserTest2(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
+
+        //Act
+        User user4 = new User("Pjuim", "a", "a", Platform.PLAYSTATION, "a", "a");
+        user4.setUserId(4);
+        User actual = userService.updateUser(user4);
+
+        //Assert
+        assertEquals(null, actual);
+    }
+
+    @Test
+    void updateUserTest3(){
+        //Arrange
+        when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+
+        //Act
+        User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PLAYSTATION, "a", "a");
+        user4.setUserId(4);
+        User actual = userService.updateUser(user4);
+
+        //Assert
+        assertEquals(null, actual);
+    }
+
+    @Test
+    void createUserTest(){
+        //Arrange
+        when(userRepository.findByUserName("yourivdloo")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAddress("youri.yvdl@gmail.com")).thenReturn(Optional.empty());
+
+        //Act
+        User actual = userService.createUser(user3);
+
+        //Assert
+        assertEquals(user3, actual);
+    }
+
+    @Test
+    void createUserTest2(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
+
+        //Act
+        User actual = userService.createUser(new User("Pjuim", "a", "a", Platform.PC, "a", "a"));
+
+        //Assert
+        assertEquals(null, actual);
+    }
+
+    @Test
+    void createUserTest3(){
+        //Arrange
+        when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+
+        //Act
+        User actual = userService.createUser(new User("a", "nikkipim@gmail.com", "a", Platform.PC, "a", "a"));
+
+        //Assert
+        assertEquals(null, actual);
+    }
+
+    @Test
     void addToWishlistTest(){
         //Arrange
         when(userRepository.findById(2)).thenReturn(Optional.ofNullable(user2));
