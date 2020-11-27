@@ -1,10 +1,12 @@
 package projects.rlstop;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import projects.rlstop.models.MyUserDetails;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
@@ -38,5 +40,18 @@ class MyUserDetailsServiceTests {
         Optional<User> optionalPim = Optional.of(pim);
         UserDetails expected = optionalPim.map(MyUserDetails::new).get();
         assertEquals(expected.getUsername(), actual.getUsername());
+    }
+
+    @Test
+    void loadByUserNameTest2(){
+        //Arrange
+        when(userRepository.findByUserName("Alex")).thenReturn(Optional.empty());
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> {
+            myUserDetailsService.loadUserByUsername("Alex");
+        });
     }
 }

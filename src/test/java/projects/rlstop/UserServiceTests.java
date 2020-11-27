@@ -1,12 +1,17 @@
 package projects.rlstop;
 
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.InternalServerException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.UserRepository;
@@ -50,6 +55,24 @@ class UserServiceTests {
         assertEquals(expected, actual);
     }
 
+    @Test()
+    void getAllUsersTest2(){
+        //Arrange
+//        boolean thrown = false;
+        User[] users = {};
+
+        Iterable<User> userList = Arrays.asList(users);
+
+        when(userRepository.findAll()).thenReturn(userList);
+
+        //Act
+
+        //Assert
+        assertThrows(NotFoundException.class, () -> {
+            userService.getAllUsers();
+        });
+    }
+
     @Test
     void getUsersByPlatformTest(){
         //Arrange
@@ -72,10 +95,25 @@ class UserServiceTests {
         List<User> expected = new ArrayList<User>();
 
         //Act
-        List<User> actual = userService.getUsersByPlatform(null);
 
         //Assert
-        assertEquals(expected, actual);
+        assertThrows(NotFoundException.class, () -> {
+            userService.getUsersByPlatform(null);
+        });
+    }
+
+    @Test
+    void getUsersByPlatformTest3(){
+        //Arrange
+        List<User> users = new ArrayList<>();
+        when(userRepository.findAllByPlatform(Platform.XBOX)).thenReturn(users);
+
+        //Act
+
+        //Assert
+        assertThrows(NotFoundException.class, () -> {
+            userService.getUsersByPlatform(Platform.XBOX);
+        });
     }
 
     @Test
@@ -96,10 +134,11 @@ class UserServiceTests {
         when(userRepository.findById(4)).thenReturn(Optional.empty());
 
         //Act
-        User user = userService.getUserById(4);
 
         //Assert
-        assertEquals(null, user);
+        assertThrows(NotFoundException.class, () -> {
+            userService.getUserById(4);
+        });
     }
 
     @Test
@@ -120,10 +159,11 @@ class UserServiceTests {
         when(userRepository.findByUserName("JonSandman")).thenReturn(Optional.empty());
 
         //Act
-        User user = userService.getUserByUserName("JonSandman");
 
         //Assert
-        assertEquals(null, user);
+        assertThrows(NotFoundException.class, () -> {
+            userService.getUserByUserName("JonSandman");
+        });
     }
 
     @Test
@@ -144,10 +184,11 @@ class UserServiceTests {
         when(userRepository.findById(5)).thenReturn(java.util.Optional.empty());
 
         //Act
-        boolean actual = userService.deleteUser(5);
 
         //Assert
-        assertEquals(false, actual);
+        assertThrows(NotFoundException.class, () -> {
+            userService.deleteUser(5);
+        });
     }
 
     @Test
@@ -165,6 +206,7 @@ class UserServiceTests {
     @Test
     void updateUserTest(){
         //Arrange
+        user1.setUserId(1);
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
 
@@ -185,10 +227,11 @@ class UserServiceTests {
         //Act
         User user4 = new User("Pjuim", "a", "a", Platform.PLAYSTATION, "a", "a");
         user4.setUserId(4);
-        User actual = userService.updateUser(user4);
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(BadRequestException.class, () ->  {
+            userService.updateUser(user4);
+        });
     }
 
     @Test
@@ -200,10 +243,12 @@ class UserServiceTests {
         //Act
         User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PLAYSTATION, "a", "a");
         user4.setUserId(4);
-        User actual = userService.updateUser(user4);
+
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(BadRequestException.class, () ->  {
+            userService.updateUser(user4);
+        });
     }
 
     @Test
@@ -222,27 +267,33 @@ class UserServiceTests {
     @Test
     void createUserTest2(){
         //Arrange
+        user1.setUserId(1);
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
 
         //Act
-        User actual = userService.createUser(new User("Pjuim", "a", "a", Platform.PC, "a", "a"));
+        User user4 = new User("Pjuim", "a", "a", Platform.PC, "a", "a");
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(BadRequestException.class, () ->  {
+           userService.createUser(user4);
+        });
     }
 
     @Test
     void createUserTest3(){
         //Arrange
         when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
+        user1.setUserId(1);
         when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
 
         //Act
-        User actual = userService.createUser(new User("a", "nikkipim@gmail.com", "a", Platform.PC, "a", "a"));
+        User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PC, "a", "a");
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(BadRequestException.class, () ->  {
+            userService.createUser(user4);
+        });
     }
 
     @Test
@@ -266,10 +317,11 @@ class UserServiceTests {
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
         //Act
-        User actual = userService.addToWishlist(2, "Bubbly");
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(InternalServerException.class, () ->  {
+            userService.addToWishlist(2, "Bubbly");
+        });
     }
 
     @Test
@@ -292,13 +344,12 @@ class UserServiceTests {
         //Arrange
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
-        user1.removeFromWishlist("Emeralds");
-
         //Act
-        User actual = userService.removeFromWishlist(1, "Emeralds");
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(InternalServerException.class, () ->  {
+            userService.removeFromWishlist(1, "Emeralds");
+        });
     }
 
     @Test
@@ -321,13 +372,12 @@ class UserServiceTests {
         //Arrange
         when(userRepository.findById(1)).thenReturn(Optional.empty());
 
-        user1.clearWishlist();
-
         //Act
-        User actual = userService.clearWishlist(1);
 
         //Assert
-        assertEquals(null, actual);
+        assertThrows(InternalServerException.class, () ->  {
+            User actual = userService.clearWishlist(1);
+        });
     }
 
 }

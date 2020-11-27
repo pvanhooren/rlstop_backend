@@ -1,6 +1,5 @@
 package projects.rlstop.models.database;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.helpers.StringListConverter;
 import projects.rlstop.models.enums.Platform;
@@ -43,22 +42,21 @@ public class User {
     @Column(name="wishlist")
     private List<String> wishlist = new ArrayList<>();
 
-    @JsonIgnore
     @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="user_roles",
             joinColumns = { @JoinColumn(name = "userId") },
             inverseJoinColumns = { @JoinColumn(name = "roleId") })
-    private Collection<Role> data = new ArrayList<>();
+    private Collection<Role> roles = new ArrayList<>();
 
     public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.userName = userName;
         this.emailAddress = emailAddress;
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.passwordHash = encoder.encode(password);
         this.platform = platform;
         this.platformID = platformID;
         this.active = true;
-        data.add(new Role(UserRole.ROLE_USER));
+        roles.add(new Role(UserRole.ROLE_USER));
 
         if(wishlist.contains(",")) {
             String[] elements = wishlist.split(",");
@@ -156,12 +154,12 @@ public class User {
         return active;
     }
 
-    public Collection<Role> getData() {
-        return data;
+    public Collection<Role> getRoles() {
+        return roles;
     }
 
-    public void setData(Collection<Role> data) {
-        this.data = data;
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

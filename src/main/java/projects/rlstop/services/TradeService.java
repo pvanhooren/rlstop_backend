@@ -2,6 +2,8 @@ package projects.rlstop.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
@@ -31,6 +33,10 @@ public class TradeService {
             trades.add(trade);
         }
 
+        if(trades.isEmpty()) {
+            throw new NotFoundException("There are currently no complete trades in the database");
+        }
+
         return trades;
     }
 
@@ -41,14 +47,18 @@ public class TradeService {
         if(user.isPresent()) {
             Iterable<Trade> allTrades = tradeRepository.findAllByUserUserId(id);
 
-
             for (Trade trade : allTrades) {
                 Optional<User> user2 = userRepository.findById(trade.getUser().getUserId());
                 user2.ifPresent(trade::setUser);
                 trades.add(trade);
             }
+
+            if(!trades.isEmpty()) {
+                return trades;
+            }
         }
-        return trades;
+
+        throw new NotFoundException("There are no trades posted by this user in the database.");
     }
 
     public List<Trade> getTradesByPlatform(Platform platform){
@@ -62,9 +72,13 @@ public class TradeService {
                     user.ifPresent(trade::setUser);
                     trades.add(trade);
                 }
-            }
 
-        return trades;
+            if(!trades.isEmpty()) {
+                return trades;
+            }
+        }
+
+        throw new NotFoundException("There are no trades with this platform in the database.");
     }
 
     public Trade getTradeById(int id){
@@ -76,10 +90,10 @@ public class TradeService {
             if (user.isPresent()) {
                 trade.setUser(user.get());
             } else {
-                return null;
+                throw new NotFoundException("User linked to the trade was not found. Please provide a valid trade.");
             }
         } else {
-            return null;
+            throw new NotFoundException("Trade was not found. Please provide a valid trade ID.");
         }
 
         return trade;
@@ -92,7 +106,7 @@ public class TradeService {
             return true;
         }
 
-        return false;
+        throw new NotFoundException("Trade doesn't exist. Might have already been deleted.");
     }
 
     public Trade saveTrade(Trade trade, int userId){
@@ -104,7 +118,7 @@ public class TradeService {
                     return trade;
                 }
 
-                return null;
+        throw new BadRequestException("The linked user can't be found.");
     }
 
 }

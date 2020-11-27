@@ -1,9 +1,12 @@
 package projects.rlstop;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
@@ -65,6 +68,23 @@ class TradeServiceTests {
     }
 
     @Test
+    void getAllTradesTest2(){
+        //Arrange
+        Trade[] trades = {};
+
+        Iterable<Trade> tradeList = Arrays.asList(trades);
+
+        when(tradeRepository.findAll()).thenReturn(tradeList);
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->  {
+            tradeService.getAllTrades();
+        });
+    }
+
+    @Test
     void getTradesByUserTest(){
         //Arrange
         List<Trade> tradesByUser3 = new ArrayList<>();
@@ -84,15 +104,30 @@ class TradeServiceTests {
     @Test
     void getTradesByUserTest2(){
         //Arrange
-        List<Trade> expected = new ArrayList<Trade>();
-
         when(userRepository.findById(0)).thenReturn(Optional.empty());
 
         //Act
-        List<Trade> actual = tradeService.getTradesByUser(0);
 
         //Assert
-        assertEquals(expected, actual);
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradesByUser(0);
+        });
+    }
+
+    @Test
+    void getTradesByUserTest3(){
+        //Arrange
+        List<Trade> tradesByUser3 = new ArrayList<>();
+
+        when(tradeRepository.findAllByUserUserId(3)).thenReturn(tradesByUser3);
+        when(userRepository.findById(3)).thenReturn(Optional.ofNullable(user3));
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradesByUser(3);
+        });
     }
 
     @Test
@@ -116,13 +151,28 @@ class TradeServiceTests {
     @Test
     void getTradesByPlatformTest2(){
         //Arrange
-        List<Trade> expected = new ArrayList<Trade>();
 
         //Act
-        List<Trade> actual = tradeService.getTradesByPlatform(null);
 
         //Assert
-        assertEquals(expected, actual);
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradesByPlatform(null);
+        });
+    }
+
+    @Test
+    void getTradesByPlatformTest3(){
+        //Arrange
+        List<Trade> tradesonPS = new ArrayList<>();
+
+        when(tradeRepository.findAllByUserPlatform(Platform.PLAYSTATION)).thenReturn(tradesonPS);
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradesByPlatform(Platform.PLAYSTATION);
+        });
     }
 
     @Test
@@ -145,10 +195,11 @@ class TradeServiceTests {
         when(tradeRepository.findById(5)).thenReturn(Optional.empty());
 
         //Act
-        Trade actual = tradeService.getTradeById(5);
 
         //Assert
-        assertEquals(null, actual);
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradeById(5);
+        });
     }
 
     @Test
@@ -158,10 +209,11 @@ class TradeServiceTests {
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
         //Act
-        Trade actual = tradeService.getTradeById(2);
 
         //Assert
-        assertEquals(null, actual);
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.getTradeById(2);
+        });
     }
 
     @Test
@@ -182,10 +234,11 @@ class TradeServiceTests {
         when(tradeRepository.findById(5)).thenReturn(Optional.empty());
 
         //Act
-        boolean actual = tradeService.deleteTrade(5);
 
         //Assert
-        assertEquals(false, actual);
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            tradeService.deleteTrade(5);
+        });
     }
 
     @Test
@@ -209,9 +262,10 @@ class TradeServiceTests {
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
         //Act
-        Trade actual = tradeService.saveTrade(trade2, 2);
 
         //Assert
-        assertEquals(null, actual);
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            tradeService.saveTrade(trade2, 2);
+        });
     }
 }

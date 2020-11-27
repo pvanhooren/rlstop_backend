@@ -18,7 +18,7 @@ public class Role {
     private UserRole roleName;
 
     @JsonIgnore
-    @ManyToMany(cascade=CascadeType.ALL, mappedBy="data")
+    @ManyToMany(cascade=CascadeType.ALL, mappedBy="roles")
     private Collection<User> users = new ArrayList<>();
 
     public Role(UserRole roleName) {

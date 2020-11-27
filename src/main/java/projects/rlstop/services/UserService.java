@@ -2,6 +2,9 @@ package projects.rlstop.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projects.rlstop.exceptions.BadRequestException;
+import projects.rlstop.exceptions.InternalServerException;
+import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.UserRepository;
@@ -23,30 +26,49 @@ public class UserService {
             users.add(user);
         }
 
+        if(users.isEmpty()){
+            throw new NotFoundException("There are currently no users in the database.");
+        }
+
         return users;
     }
 
     public List<User> getUsersByPlatform(Platform platform){
         ArrayList<User> users = new ArrayList<>();
 
-                if(platform!=null){
-                    Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
-                for(User user : usersIterable){
-                        users.add(user);
-                }
+        if(platform!=null){
+            Iterable<User> usersIterable = userRepository.findAllByPlatform(platform);
+
+            for(User user : usersIterable){
+                users.add(user);
             }
 
-        return users;
+            if(!users.isEmpty()) {
+                return users;
+            }
+        }
+
+        throw new NotFoundException("There are no users with this platform in the database.");
     }
 
     public User getUserById(int id){
         Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NotFoundException("User was not found. Please provide a valid user ID");
+        }
     }
 
     public User getUserByUserName(String userName){
         Optional<User> user = userRepository.findByUserName(userName);
-        return user.orElse(null);
+
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NotFoundException("User was not found. Please provide a valid username.");
+        }
     }
 
     public boolean deleteUser(int id){
@@ -56,7 +78,7 @@ public class UserService {
             return true;
         }
 
-        return false;
+        throw new NotFoundException("User doesn't exist. Might have already been deleted.");
     }
 
     public User saveUser(User user){
@@ -65,26 +87,16 @@ public class UserService {
     }
 
     public User updateUser(User user){
-        if(nameExist(user.getUserName())){
-            if(userRepository.findByUserName(user.getUserName()).get().getUserId() != user.getUserId()){
-                return null;
-            }
-        }
-
-        if(emailExist(user.getEmailAddress())){
-            if(userRepository.findByEmailAddress(user.getEmailAddress()).get().getUserId() != user.getUserId()){
-                return null;
-            }
-        }
+        nameExist(user.getUserId(), user.getUserName());
+        emailExist(user.getUserId(), user.getEmailAddress());
 
         return saveUser(user);
     }
 
     public User createUser(User user){
-        if(nameExist(user.getUserName()) || emailExist(user.getEmailAddress())){
-            return null;
-        }
-            return saveUser(user);
+        nameExist(0, user.getUserName());
+        emailExist(0, user.getEmailAddress());
+        return saveUser(user);
     }
 
     public User addToWishlist(int id, String item){
@@ -95,7 +107,7 @@ public class UserService {
             userRepository.save(user);
             return user;
         }
-        return null;
+        throw new InternalServerException("The item was not added, an error occurred.");
     }
 
     public User removeFromWishlist(int id, String item){
@@ -106,7 +118,7 @@ public class UserService {
             userRepository.save(user);
             return user;
         }
-        return null;
+        throw new InternalServerException("The item was not removed, an error occured.");
     }
 
     public User clearWishlist(int id){
@@ -117,14 +129,24 @@ public class UserService {
             userRepository.save(user);
             return user;
         }
-        return null;
+        throw new InternalServerException("The wishlist was not cleared, an error occured.");
     }
 
-    private boolean emailExist(String email) {
-        return userRepository.findByEmailAddress(email).isPresent();
+    private boolean emailExist(int id, String email) {
+        Optional<User> user = userRepository.findByEmailAddress(email);
+        if(user.isPresent() && id != user.get().getUserId()){
+            throw new BadRequestException("There is already a user with that email address.");
+        }
+
+        return false;
     }
 
-    private boolean nameExist(String name){
-        return userRepository.findByUserName(name).isPresent();
+    private boolean nameExist(int id, String name){
+        Optional<User> user = userRepository.findByUserName(name);
+        if(user.isPresent() && id != user.get().getUserId()){
+            throw new BadRequestException("There is already a user with that email address.");
+        }
+
+        return false;
     }
 }
