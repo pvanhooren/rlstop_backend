@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "trades")
 public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,28 +69,5 @@ public class Trade {
     public User getUser() { return user; }
 
     public void setUser(User user) { this.user = user; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Trade trade = (Trade) o;
-        return tradeId == trade.getTradeId();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Post (" + tradeId + ") {" + "\n" +
-                user.getUserName() + "\n" +
-                "Wants: " + wants + "\n" +
-                "Offers: " + offers + "\n" +
-                user.getPlatform() + " ID: " + user.getPlatformID() + "\n" +
-                "}" + "\n" ;
-    }
 }
 

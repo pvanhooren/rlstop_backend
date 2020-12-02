@@ -14,7 +14,6 @@ import projects.rlstop.models.enums.Platform;
 
 @SpringBootTest
 class UserTests {
-
     @Test
     void setPasswordHashTest(){
         //Arrange
@@ -80,7 +79,7 @@ class UserTests {
     }
 
     @Test
-    void removeFromWishlist(){
+    void removeFromWishlistTest(){
         //Arrange
         User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-0123-4567-8910", "Party Time,Emeralds");
         List<String> expected = new ArrayList<>();
@@ -94,7 +93,7 @@ class UserTests {
     }
 
     @Test
-    void clearWishlist(){
+    void clearWishlistTest(){
         //Arrange
         User user = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-0123-4567-8910", "Party Time,Emeralds");
         List<String> expected = new ArrayList<>();

@@ -8,7 +8,6 @@ import projects.rlstop.models.enums.UserRole;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -42,11 +41,11 @@ public class User {
     @Column(name="wishlist")
     private List<String> wishlist = new ArrayList<>();
 
-    @ManyToMany(cascade=CascadeType.ALL)
+    @ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(name="user_roles",
-            joinColumns = { @JoinColumn(name = "userId") },
-            inverseJoinColumns = { @JoinColumn(name = "roleId") })
-    private Collection<Role> roles = new ArrayList<>();
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") })
+    private List<Role> roles = new ArrayList<>();
 
     public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
         this.userName = userName;
@@ -56,7 +55,7 @@ public class User {
         this.platform = platform;
         this.platformID = platformID;
         this.active = true;
-        roles.add(new Role(UserRole.ROLE_USER));
+        this.roles.add(new Role(UserRole.ROLE_USER));
 
         if(wishlist.contains(",")) {
             String[] elements = wishlist.split(",");
@@ -154,34 +153,11 @@ public class User {
         return active;
     }
 
-    public Collection<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return userId == user.getUserId();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "User (" + userId + ") {" + "\n" +
-                "Email Address = " + emailAddress + "\n" +
-                "UserName = " + userName + "\n" +
-                platform + " ID = " + platformID + "\n" +
-                "Wishlist :" + wishlist + "\n" +
-                "}" + "\n";
     }
 }

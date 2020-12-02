@@ -10,17 +10,12 @@ import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.services.TradeService;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/trades")
 public class TradeController {
-    @Context
-    private UriInfo uriInfo;
-
     @Autowired
     private TradeService tradeService;
 

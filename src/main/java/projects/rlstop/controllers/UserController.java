@@ -10,17 +10,12 @@ import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.services.UserService;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true", allowedHeaders = "*")
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    @Context
-    private UriInfo uriInfo;
-
     @Autowired
     private UserService userService;
 
@@ -55,8 +50,12 @@ public class UserController {
     }
 
     @PostMapping(path = "/new")
-    public @ResponseBody ResponseEntity<User> createUser(@RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) String password, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
-        if(name != null && !name.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
+    public @ResponseBody ResponseEntity<User> createUser( @RequestParam(required= false) String creds, @RequestParam(required= false) String email, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
+        if(creds != null && !creds.isEmpty() && email != null && !email.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
+            String credentials = new String(Base64.getDecoder().decode(creds.getBytes()));
+            final StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
+            final String name = tokenizer.nextToken();
+            final String password = tokenizer.nextToken();
             User user = new User(name, email, password, platform, platformID, wishlist);
             User result = userService.createUser(user);
             return new ResponseEntity<>(result, HttpStatus.OK);
