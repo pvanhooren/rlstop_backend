@@ -144,10 +144,67 @@ class InterestServiceTests {
     }
 
     @Test
+    void getSpecificInterestTest(){
+        //Arrange
+        when(userRepository.findById(3)).thenReturn(Optional.of(user3));
+        when(tradeRepository.findById(1)).thenReturn(Optional.of(trade1));
+        when(interestRepository.findByUserUserIdAndTradeTradeId(3,1)).thenReturn(Optional.of(interest3));
+
+        //Act
+        Interest actual = interestService.getSpecificInterest(3,1);
+
+        //Assert
+        assertEquals(interest3, actual);
+    }
+
+    @Test
+    void getSpecificInterestTest2(){
+        //Arrange
+        when(userRepository.findById(3)).thenReturn(Optional.of(user3));
+        when(tradeRepository.findById(2)).thenReturn(Optional.of(trade2));
+        when(interestRepository.findByUserUserIdAndTradeTradeId(3, 2)).thenReturn(Optional.empty());
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            interestService.getSpecificInterest(3,2);
+        });
+    }
+
+    @Test
+    void getSpecificInterestTest3(){
+        //Arrange
+        when(userRepository.findById(5)).thenReturn(Optional.empty());
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            interestService.getSpecificInterest(5,2);
+        });
+    }
+
+    @Test
+    void getSpecificInterestTest4(){
+        //Arrange
+        when(userRepository.findById(3)).thenReturn(Optional.of(user3));
+        when(tradeRepository.findById(5)).thenReturn(Optional.empty());
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(NotFoundException.class, () ->{
+            interestService.getSpecificInterest(3,5);
+        });
+    }
+
+    @Test
     void saveInterestTest(){
         //Arrange
         user1.setUserId(1);
         trade4.setTradeId(4);
+        when(interestRepository.findByUserUserIdAndTradeTradeId(1,4)).thenReturn(Optional.empty());
         when(interestRepository.save(interest1)).thenReturn(interest1);
         when(userRepository.findById(1)).thenReturn(Optional.ofNullable(user1));
         when(tradeRepository.findById(4)).thenReturn(Optional.ofNullable(trade4));
@@ -185,6 +242,24 @@ class InterestServiceTests {
         //Assert
         Assertions.assertThrows(BadRequestException.class, () ->{
             interestService.saveInterest(interest3, 3, 3);
+        });
+    }
+
+    @Test
+    void saveInterestTest4(){
+        //Arrange
+        user1.setUserId(1);
+        trade4.setTradeId(4);
+        when(interestRepository.findByUserUserIdAndTradeTradeId(1,4)).thenReturn(Optional.of(interest1));
+        when(interestRepository.save(interest1)).thenReturn(interest1);
+        when(userRepository.findById(1)).thenReturn(Optional.ofNullable(user1));
+        when(tradeRepository.findById(4)).thenReturn(Optional.ofNullable(trade4));
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            interestService.saveInterest(interest1, 1, 4);
         });
     }
 

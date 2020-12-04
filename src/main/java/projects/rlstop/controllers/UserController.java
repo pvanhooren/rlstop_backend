@@ -51,38 +51,44 @@ public class UserController {
 
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<User> createUser( @RequestParam(required= false) String creds, @RequestParam(required= false) String email, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID, @RequestParam(required= false) String wishlist) {
+        String error = "Not all fields have been filled in. Please fill in the missing fields.";
+
         if(creds != null && !creds.isEmpty() && email != null && !email.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
             String credentials = new String(Base64.getDecoder().decode(creds.getBytes()));
             final StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
-            final String name = tokenizer.nextToken();
-            final String password = tokenizer.nextToken();
+            final String name;
+            final String password;
+
+            try {
+                name = tokenizer.nextToken();
+                password = tokenizer.nextToken();
+            } catch(NoSuchElementException n){
+                throw new BadRequestException(error);
+            }
+
             User user = new User(name, email, password, platform, platformID, wishlist);
             User result = userService.createUser(user);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
-        throw new BadRequestException("The user can not be added because it is not complete");
+        throw new BadRequestException(error);
     }
 
     @PutMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<User> updateUser(@PathVariable int id, @RequestParam(required= false) String name, @RequestParam(required= false) String email, @RequestParam(required= false) Platform platform, @RequestParam(required= false) String platformID) {
         User user = userService.getUserById(id);
 
-            if (name != null && !name.isEmpty()) {
-                user.setUserName(name);
-            }
-            if (email != null && !email.isEmpty()) {
-                user.setEmailAddress(email);
-            }
-            if (platform != null) {
-                user.setPlatform(platform);
-            }
-            if (platformID != null && !platformID.isEmpty()) {
-                user.setPlatformID(platformID);
-            }
+        if (email != null && !email.isEmpty() && name != null && !name.isEmpty() && platform != null && platformID != null && !platformID.isEmpty()){
+            user.setUserName(name);
+            user.setEmailAddress(email);
+            user.setPlatform(platform);
+            user.setPlatformID(platformID);
 
             User result = userService.updateUser(user);
             return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
+        throw new BadRequestException("Not all fields have been filled in. Please fill in the missing fields.");
     }
 
     @PutMapping(path = "/{id}/add/{item}")

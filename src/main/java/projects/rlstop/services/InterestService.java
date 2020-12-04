@@ -68,6 +68,27 @@ public class InterestService {
         throw new NotFoundException("There are no users interested in this trade in the database.");
     }
 
+    public Interest getSpecificInterest(int userId, int tradeId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+
+            Optional<Trade> trade = tradeRepository.findById(tradeId);
+            if (trade.isPresent()) {
+                Optional<Interest> existingInterest =  interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
+
+                if(existingInterest.isPresent()){
+                    return existingInterest.get();
+                }
+
+                throw new NotFoundException("The linked user is not yet interested in the linked trade.");
+            }
+
+            throw new NotFoundException("The linked trade can't be found.");
+        }
+
+        throw new NotFoundException("The linked user can't be found.");
+    }
+
     public Interest saveInterest(Interest interest, int userId, int tradeId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
@@ -75,6 +96,13 @@ public class InterestService {
 
             Optional<Trade> trade = tradeRepository.findById(tradeId);
             if (trade.isPresent()) {
+
+                Optional<Interest> existingInterest =  interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
+
+                if(existingInterest.isPresent()){
+                    throw new BadRequestException("This user is already listed as interested on this trade.");
+                }
+
                 interest.setTrade(trade.get());
                 interestRepository.save(interest);
                 return interest;
@@ -88,6 +116,7 @@ public class InterestService {
 
     public boolean deleteInterest(int id) {
         Optional<Interest> interest = interestRepository.findById(id);
+
         if (interest.isPresent()) {
             interestRepository.delete(interest.get());
             return true;

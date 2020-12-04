@@ -18,6 +18,12 @@ public class InterestController {
     @Autowired
     InterestService interestService;
 
+    @GetMapping()
+    public @ResponseBody ResponseEntity<Interest> getSpecificInterest(@RequestParam int user, @RequestParam int trade){
+        Interest interest = interestService.getSpecificInterest(user, trade);
+        return new ResponseEntity<>(interest, HttpStatus.OK);
+    }
+
     @GetMapping(path = "/user")
     public @ResponseBody ResponseEntity<List<Interest>> getInterestsByUser(@RequestParam int id){
         List<Interest> interests = interestService.getInterestsByUser(id);
@@ -31,10 +37,10 @@ public class InterestController {
     }
 
     @PostMapping(path= "/new")
-    public @ResponseBody ResponseEntity<Interest> createInterest(@RequestParam(required = false) int userId, @RequestParam(required = false) int tradeId, @RequestParam(required = false) String comment){
-        if (userId != 0 && tradeId != 0) {
+    public @ResponseBody ResponseEntity<Interest> createInterest(@RequestParam(required = false) int user, @RequestParam(required = false) int trade, @RequestParam(required = false) String comment){
+        if (user != 0 && trade != 0) {
             Interest interest = new Interest(null, null, comment);
-            Interest result = interestService.saveInterest(interest, userId, tradeId);
+            Interest result = interestService.saveInterest(interest, user, trade);
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
 
@@ -44,6 +50,13 @@ public class InterestController {
     @DeleteMapping(path= "/{id}")
     public @ResponseBody ResponseEntity<String> deleteInterest(@PathVariable int id) {
         interestService.deleteInterest(id);
+        return new ResponseEntity<>("Interest has successfully been deleted.", HttpStatus.OK);
+    }
+
+    @DeleteMapping()
+    public @ResponseBody ResponseEntity<String> deleteSpecificInterest(@RequestParam int user, @RequestParam int trade){
+        Interest interest = interestService.getSpecificInterest(user, trade);
+        interestService.deleteInterest(interest.getInterestId());
         return new ResponseEntity<>("Interest has successfully been deleted.", HttpStatus.OK);
     }
 }

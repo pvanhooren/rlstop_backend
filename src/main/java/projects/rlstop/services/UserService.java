@@ -144,7 +144,7 @@ public class UserService {
     private boolean nameExist(int id, String name){
         Optional<User> user = userRepository.findByUserName(name);
         if(user.isPresent() && id != user.get().getUserId()){
-            throw new BadRequestException("There is already a user with that email address.");
+            throw new BadRequestException("There is already a user with that username.");
         }
 
         return false;
