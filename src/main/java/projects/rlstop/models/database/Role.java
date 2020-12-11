@@ -16,7 +16,7 @@ public class Role {
 
     @Enumerated(EnumType.ORDINAL)
     private UserRole roleName;
-
+    
     @JsonIgnore
     @ManyToMany(cascade=CascadeType.ALL, mappedBy="roles")
     private Collection<User> users = new ArrayList<>();

@@ -1,7 +1,11 @@
 package projects.rlstop.models.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "trades")
@@ -23,6 +27,11 @@ public class Trade {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Transient
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="trade")
+    private List<Interest> interests = new ArrayList<>();
 
     public Trade(String wants, String offers, User user){
         this.wants = wants;

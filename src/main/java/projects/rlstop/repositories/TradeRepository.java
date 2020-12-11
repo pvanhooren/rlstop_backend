@@ -5,7 +5,9 @@ import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.enums.Platform;
 
 public interface TradeRepository extends CrudRepository<Trade, Integer> {
-    Iterable<Trade> findAllByUserPlatform(Platform platform);
+    Iterable<Trade> findAllByOrderByLastModifiedDesc();
 
-    Iterable<Trade> findAllByUserUserId(int userId);
+    Iterable<Trade> findAllByUserPlatformOrderByLastModifiedDesc(Platform platform);
+
+    Iterable<Trade> findAllByUserUserIdOrderByLastModifiedDesc(int userId);
 }

@@ -42,9 +42,11 @@ public class InterestService {
             if (!interests.isEmpty()) {
                 return interests;
             }
+
+            throw new NotFoundException("There are no trades that this user is interested in the database.");
         }
 
-        throw new NotFoundException("There are no trades that this user is interested in the database.");
+        throw new NotFoundException("User was not found. Please provide a valid user ID");
     }
 
     public List<Interest> getInterestsByTrade(int tradeId) {
@@ -63,9 +65,11 @@ public class InterestService {
             if (!interests.isEmpty()) {
                 return interests;
             }
+
+            throw new NotFoundException("There are no users interested in this trade in the database.");
         }
 
-        throw new NotFoundException("There are no users interested in this trade in the database.");
+        throw new NotFoundException("Trade was not found. Please provide a valid trade ID.");
     }
 
     public Interest getSpecificInterest(int userId, int tradeId) {

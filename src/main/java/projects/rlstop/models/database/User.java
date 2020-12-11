@@ -1,5 +1,6 @@
 package projects.rlstop.models.database;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import projects.rlstop.helpers.StringListConverter;
 import projects.rlstop.models.enums.Platform;
@@ -24,6 +25,7 @@ public class User {
     @Column(name="email_address")
     private String emailAddress;
 
+    @JsonIgnore
     @Column(name="password_hash")
     private String passwordHash;
 
@@ -34,6 +36,7 @@ public class User {
     @Column(name="platformid")
     private String platformID;
 
+    @JsonIgnore
     @Column(name="active")
     private boolean active;
 
@@ -46,6 +49,16 @@ public class User {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "role_id") })
     private List<Role> roles = new ArrayList<>();
+
+    @Transient
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
+    private List<Trade> trades = new ArrayList<>();
+
+    @Transient
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
+    private List<Interest> interests = new ArrayList<>();
 
     public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
         this.userName = userName;
@@ -126,10 +139,6 @@ public class User {
         return wishlist;
     }
 
-    public void setWishlist(List<String> wishlist) {
-        this.wishlist = wishlist;
-    }
-
     public void addToWishlist(String item) {
         if(this.wishlist.get(0).equals("")){
             this.clearWishlist();
@@ -148,10 +157,6 @@ public class User {
     public void clearWishlist() { this.wishlist.clear(); }
 
     public void removeFromWishlist(String item) { this.wishlist.remove(item); }
-
-    public boolean isActive() {
-        return active;
-    }
 
     public List<Role> getRoles() {
         return roles;

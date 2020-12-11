@@ -24,6 +24,7 @@ class InterestTests {
         //Act
         String message = "I'll do it for 1800c";
         Interest interest = new Interest(interestedUser, trade, message);
+        interest.setInterestId(1);
 
         //Assert
         assertEquals(message, interest.getComment());

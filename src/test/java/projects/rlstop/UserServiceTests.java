@@ -58,7 +58,6 @@ class UserServiceTests {
     @Test()
     void getAllUsersTest2(){
         //Arrange
-//        boolean thrown = false;
         User[] users = {};
 
         Iterable<User> userList = Arrays.asList(users);
@@ -209,9 +208,10 @@ class UserServiceTests {
         user1.setUserId(1);
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+        user1.setPlatformID("SW-0000-1111-2222");
+        when(userRepository.save(user1)).thenReturn(user1);
 
         //Act
-        user1.setPlatformID("SW-0000-1111-2222");
         User actual = userService.updateUser(user1);
 
         //Assert
@@ -256,6 +256,7 @@ class UserServiceTests {
         //Arrange
         when(userRepository.findByUserName("yourivdloo")).thenReturn(Optional.empty());
         when(userRepository.findByEmailAddress("youri.yvdl@gmail.com")).thenReturn(Optional.empty());
+        when(userRepository.save(user3)).thenReturn(user3);
 
         //Act
         User actual = userService.createUser(user3);

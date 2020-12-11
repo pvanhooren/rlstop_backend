@@ -24,14 +24,8 @@ public class TradeService {
     private UserRepository userRepository;
 
     public List<Trade> getAllTrades(){
-        Iterable<Trade> itrades = tradeRepository.findAll();
-        ArrayList<Trade> trades = new ArrayList<>();
-
-        for(Trade trade : itrades){
-            Optional<User> user = userRepository.findById(trade.getUser().getUserId());
-            user.ifPresent(trade::setUser);
-            trades.add(trade);
-        }
+        Iterable<Trade> itrades = tradeRepository.findAllByOrderByLastModifiedDesc();
+        List<Trade> trades = checkIterable(itrades);
 
         if(trades.isEmpty()) {
             throw new NotFoundException("There are currently no complete trades in the database");
@@ -41,17 +35,10 @@ public class TradeService {
     }
 
     public List<Trade> getTradesByUser(int id){
-        ArrayList<Trade> trades = new ArrayList<>();
-
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
-            Iterable<Trade> allTrades = tradeRepository.findAllByUserUserId(id);
-
-            for (Trade trade : allTrades) {
-                Optional<User> user2 = userRepository.findById(trade.getUser().getUserId());
-                user2.ifPresent(trade::setUser);
-                trades.add(trade);
-            }
+            Iterable<Trade> allTrades = tradeRepository.findAllByUserUserIdOrderByLastModifiedDesc(id);
+            List<Trade> trades = checkIterable(allTrades);
 
             if(!trades.isEmpty()) {
                 return trades;
@@ -62,16 +49,9 @@ public class TradeService {
     }
 
     public List<Trade> getTradesByPlatform(Platform platform){
-        ArrayList<Trade> trades = new ArrayList<>();
-
         if(platform!=null){
-                Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatform(platform);
-
-                for (Trade trade : allTrades) {
-                    Optional<User> user = userRepository.findById(trade.getUser().getUserId());
-                    user.ifPresent(trade::setUser);
-                    trades.add(trade);
-                }
+            Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatformOrderByLastModifiedDesc(platform);
+            List<Trade> trades = checkIterable(allTrades);
 
             if(!trades.isEmpty()) {
                 return trades;
@@ -100,13 +80,9 @@ public class TradeService {
     }
 
     public boolean deleteTrade(int id){
-        Optional<Trade> trade = tradeRepository.findById(id);
-        if (trade.isPresent()) {
-            tradeRepository.delete(trade.get());
-            return true;
-        }
-
-        throw new NotFoundException("Trade doesn't exist. Might have already been deleted.");
+        Trade trade = getTradeById(id);
+        tradeRepository.delete(trade);
+        return true;
     }
 
     public Trade saveTrade(Trade trade, int userId){
@@ -119,6 +95,17 @@ public class TradeService {
                 }
 
         throw new BadRequestException("The linked user can't be found.");
+    }
+
+    public List<Trade> checkIterable(Iterable<Trade> allTrades){
+        List<Trade> trades = new ArrayList<>();
+        for (Trade trade : allTrades) {
+            Optional<User> user = userRepository.findById(trade.getUser().getUserId());
+            user.ifPresent(trade::setUser);
+            trades.add(trade);
+        }
+
+        return trades;
     }
 
 }
