@@ -50,15 +50,13 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name = "role_id") })
     private List<Role> roles = new ArrayList<>();
 
-    @Transient
-    @JsonIgnore
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
-    private List<Trade> trades = new ArrayList<>();
-
-    @Transient
     @JsonIgnore
     @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
     private List<Interest> interests = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="user")
+    private List<Trade> trades = new ArrayList<>();
 
     public User(String userName, String emailAddress, String password, Platform platform, String platformID, String wishlist){
         this.userName = userName;
@@ -72,8 +70,8 @@ public class User {
 
         if(wishlist.contains(",")) {
             String[] elements = wishlist.split(",");
-            List<String> fixedLenghtList = Arrays.asList(elements);
-            this.wishlist = new ArrayList<>(fixedLenghtList);
+            List<String> fixedLengthList = Arrays.asList(elements);
+            this.wishlist = new ArrayList<>(fixedLengthList);
         } else {
             this.wishlist.add(wishlist);
         }
@@ -146,9 +144,7 @@ public class User {
 
         if(item.contains(",")) {
             String[] elements = item.split(",");
-            for(String s : elements){
-                this.wishlist.add(s);
-            }
+            this.wishlist.addAll(Arrays.asList(elements));
         } else {
             this.wishlist.add(item);
         }

@@ -27,6 +27,8 @@ class InterestTests {
         interest.setInterestId(1);
 
         //Assert
+        assertEquals(2, interest.getUser().getUserId());
+        assertEquals(1, interest.getTrade().getTradeId());
         assertEquals(message, interest.getComment());
     }
 

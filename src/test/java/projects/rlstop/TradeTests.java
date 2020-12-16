@@ -19,19 +19,8 @@ class TradeTests {
         Trade trade = new Trade("2000c", "Interstellar", user);
 
         //Assert
+        assertEquals("2000c", trade.getWants());
         assertEquals("Interstellar", trade.getOffers());
-    }
-
-    @Test
-    void tradeCtorTest(){
-        //Arrange
-        Trade trade = new Trade("2000c", "Interstellar", null);
-
-        //Act
-        String wants = trade.getWants();
-
-        //Assert
-        assertEquals("2000c", wants);
     }
 
     @Test

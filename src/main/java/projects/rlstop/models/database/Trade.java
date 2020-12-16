@@ -28,7 +28,6 @@ public class Trade {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Transient
     @JsonIgnore
     @OneToMany(cascade=CascadeType.ALL, mappedBy="trade")
     private List<Interest> interests = new ArrayList<>();

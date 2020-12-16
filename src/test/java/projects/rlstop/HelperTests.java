@@ -7,11 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import projects.rlstop.helpers.JwtUtil;
 import projects.rlstop.helpers.StringListConverter;
 
 @SpringBootTest
 class HelperTests {
     StringListConverter slt = new StringListConverter();
+
+    JwtUtil jwtUtil = new JwtUtil();
 
     @Test
     void convertToStringTest(){

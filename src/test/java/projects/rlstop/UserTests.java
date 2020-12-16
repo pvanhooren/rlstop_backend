@@ -48,6 +48,10 @@ class UserTests {
 
         //Assert
         assertEquals("Kaasje", user.getUserName());
+        assertEquals("koen@gmail.com", user.getEmailAddress());
+        assertEquals(Platform.PLAYSTATION, user.getPlatform());
+        assertEquals("hutskoen", user.getPlatformID());
+        assertEquals("Road Hog XL", user.getWishlist().get(0));
     }
 
     @Test
