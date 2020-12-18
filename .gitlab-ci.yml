@@ -1,3 +1,6 @@
+variables:
+  SONAR_LOGIN: "admin"
+  SONAR_PASSWORD: "pimpas"
 stages:
   - build
   - test
@@ -13,5 +16,6 @@ test:
 sonarqube:
   dependencies:
     - test
-  script: "mvn compile sonar:sonar -Dsonar.login=admin -Dsonar.password=pimpas"
+  script:
+    - mvn compile sonar:sonar -Dsonar.login=$SONAR_LOGIN -Dsonar.password=$SONAR_PASSWORD
   stage: sonarqube
