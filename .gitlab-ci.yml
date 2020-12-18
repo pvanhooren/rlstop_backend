@@ -13,5 +13,5 @@ test:
 sonarqube:
   dependencies:
     - test
-  script: "mvn compile sonar:sonar -Dsonar.login='admin' -Dsonar.password='pimpas'"
+  script: "mvn compile sonar:sonar -Dsonar.login=admin -Dsonar.password=pimpas"
   stage: sonarqube
