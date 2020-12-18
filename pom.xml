@@ -16,6 +16,8 @@
 
     <properties>
         <java.version>11</java.version>
+        <sonar.login>admin</sonar.login>
+        <sonar.password>pimpas</sonar.password>
         <sonar.java.binaries>target/classes</sonar.java.binaries>
     </properties>
 
