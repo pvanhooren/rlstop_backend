@@ -7,7 +7,7 @@ import projects.rlstop.models.AuthResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class AuthTests {
+class AuthTests {
 
     @Test
     void createResponseTest(){

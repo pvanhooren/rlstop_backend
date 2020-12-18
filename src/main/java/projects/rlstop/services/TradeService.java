@@ -87,14 +87,42 @@ public class TradeService {
 
     public Trade saveTrade(Trade trade, int userId){
         Optional<User> user = userRepository.findById(userId);
-                if (user.isPresent()) {
-                    trade.setLastModified(LocalDateTime.now());
-                    trade.setUser(user.get());
-                    tradeRepository.save(trade);
-                    return trade;
-                }
+        if (user.isPresent()) {
+            trade.setUser(user.get());
+        } else {
+            throw new BadRequestException("The linked user can't be found.");
+        }
 
-        throw new BadRequestException("The linked user can't be found.");
+        trade.setLastModified(LocalDateTime.now());
+        return tradeRepository.save(trade);
+    }
+
+    public Trade createTrade(String wants, String offers, int userId){
+        if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
+            Trade trade = new Trade(wants, offers, null);
+
+            return saveTrade(trade, userId);
+        }
+
+        throw new BadRequestException("The trade can not be added because it is not complete");
+    }
+
+    public Trade updateTrade(int id, String wants, String offers, int userId){
+        if (id != 0) {
+            Trade trade = getTradeById(id);
+
+            if (wants != null && !wants.isEmpty()) {
+                trade.setWants(wants);
+            }
+
+            if (offers != null && !offers.isEmpty()) {
+                trade.setOffers(offers);
+            }
+
+            return saveTrade(trade, userId);
+        }
+
+        throw new BadRequestException("The trade can not be updated because it is not complete");
     }
 
     public List<Trade> checkIterable(Iterable<Trade> allTrades){

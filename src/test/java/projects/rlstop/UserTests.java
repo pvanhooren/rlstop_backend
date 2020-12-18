@@ -5,7 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

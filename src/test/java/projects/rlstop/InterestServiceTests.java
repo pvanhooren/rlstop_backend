@@ -2,6 +2,7 @@ package projects.rlstop;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -205,15 +206,15 @@ class InterestServiceTests {
         user1.setUserId(1);
         trade4.setTradeId(4);
         when(interestRepository.findByUserUserIdAndTradeTradeId(1,4)).thenReturn(Optional.empty());
-        when(interestRepository.save(interest1)).thenReturn(interest1);
+        when(interestRepository.save(ArgumentMatchers.any(Interest.class))).thenReturn(interest1);
         when(userRepository.findById(1)).thenReturn(Optional.ofNullable(user1));
         when(tradeRepository.findById(4)).thenReturn(Optional.ofNullable(trade4));
 
         //Act
-        Interest actual = interestService.saveInterest(interest1, 1, 4);
+        Interest actual = interestService.saveInterest(1, 4, interest1.getComment());
 
         //Assert
-        assertEquals(interest1, actual);
+        assertEquals(interest1.getComment(), actual.getComment());
     }
 
     @Test
@@ -226,7 +227,7 @@ class InterestServiceTests {
 
         //Assert
         Assertions.assertThrows(BadRequestException.class, () ->{
-            interestService.saveInterest(interest3, 3,1);
+            interestService.saveInterest(3,1, "test");
         });
     }
 
@@ -241,7 +242,7 @@ class InterestServiceTests {
 
         //Assert
         Assertions.assertThrows(BadRequestException.class, () ->{
-            interestService.saveInterest(interest3, 3, 3);
+            interestService.saveInterest(3, 3, "test");
         });
     }
 
@@ -259,7 +260,19 @@ class InterestServiceTests {
 
         //Assert
         Assertions.assertThrows(BadRequestException.class, () ->{
-            interestService.saveInterest(interest1, 1, 4);
+            interestService.saveInterest(1, 4, "test");
+        });
+    }
+
+    @Test
+    void saveInterestTest5(){
+        //Arrange
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            interestService.saveInterest(1, 0, "test");
         });
     }
 

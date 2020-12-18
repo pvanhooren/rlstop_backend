@@ -78,9 +78,9 @@ public class InterestService {
 
             Optional<Trade> trade = tradeRepository.findById(tradeId);
             if (trade.isPresent()) {
-                Optional<Interest> existingInterest =  interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
+                Optional<Interest> existingInterest = interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
 
-                if(existingInterest.isPresent()){
+                if (existingInterest.isPresent()) {
                     return existingInterest.get();
                 }
 
@@ -93,39 +93,45 @@ public class InterestService {
         throw new NotFoundException("The linked user can't be found.");
     }
 
-    public Interest saveInterest(Interest interest, int userId, int tradeId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            interest.setUser(user.get());
+    public Interest saveInterest(int userId, int tradeId, String comment) {
+        if (userId != 0 && tradeId != 0) {
+            Interest interest = new Interest(null, null, comment);
 
-            Optional<Trade> trade = tradeRepository.findById(tradeId);
-            if (trade.isPresent()) {
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                interest.setUser(user.get());
 
-                Optional<Interest> existingInterest =  interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
+                Optional<Trade> trade = tradeRepository.findById(tradeId);
+                if (trade.isPresent()) {
 
-                if(existingInterest.isPresent()){
-                    throw new BadRequestException("This user is already listed as interested on this trade.");
+                    Optional<Interest> existingInterest = interestRepository.findByUserUserIdAndTradeTradeId(userId, tradeId);
+
+                    if (existingInterest.isPresent()) {
+                        throw new BadRequestException("This user is already listed as interested on this trade.");
+                    }
+
+                    interest.setTrade(trade.get());
+                    interestRepository.save(interest);
+                    return interest;
                 }
 
-                interest.setTrade(trade.get());
-                interestRepository.save(interest);
-                return interest;
+                throw new BadRequestException("The linked trade can't be found.");
             }
 
-            throw new BadRequestException("The linked trade can't be found.");
+            throw new BadRequestException("The linked user can't be found.");
         }
 
-        throw new BadRequestException("The linked user can't be found.");
+        throw new BadRequestException("The interest can not be added because it is not complete");
     }
 
-    public boolean deleteInterest(int id) {
-        Optional<Interest> interest = interestRepository.findById(id);
+        public boolean deleteInterest (int id){
+            Optional<Interest> interest = interestRepository.findById(id);
 
-        if (interest.isPresent()) {
-            interestRepository.delete(interest.get());
-            return true;
+            if (interest.isPresent()) {
+                interestRepository.delete(interest.get());
+                return true;
+            }
+
+            throw new NotFoundException("Interest doesn't exist. Might have already been deleted.");
         }
-
-        throw new NotFoundException("Interest doesn't exist. Might have already been deleted.");
     }
-}

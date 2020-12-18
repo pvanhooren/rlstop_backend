@@ -2,6 +2,7 @@ package projects.rlstop;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -231,30 +232,69 @@ class TradeServiceTests {
     }
 
     @Test
-    void saveTradeTest(){
+    void createTradeTest(){
         //Arrange
         user2.setUserId(2);
-        when(tradeRepository.save(trade2)).thenReturn(trade2);
-        when(userRepository.findById(2)).thenReturn(Optional.ofNullable(user2));
+        when(tradeRepository.save(ArgumentMatchers.any(Trade.class))).thenReturn(trade2);
+        when(userRepository.findById(2)).thenReturn(Optional.of(user2));
 
         //Act
-        Trade actual = tradeService.saveTrade(trade2, 2);
+        Trade actual = tradeService.createTrade(trade2.getWants(), trade2.getOffers(), 2);
 
         //Assert
         assertEquals(trade2, actual);
     }
 
     @Test
-    void saveTradeTest2(){
+    void createTradeTest2(){
         //Arrange
-        when(tradeRepository.save(trade2)).thenReturn(trade2);
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            tradeService.createTrade( "a", "a", 0);
+        });
+    }
+
+    @Test
+    void updateTradeTest(){
+        //Arrange
+        user2.setUserId(2);
+        trade2.setTradeId(2);
+        when(tradeRepository.findById(2)).thenReturn(Optional.of(trade2));
+        when(tradeRepository.save(ArgumentMatchers.any(Trade.class))).thenReturn(trade2);
+        when(userRepository.findById(2)).thenReturn(Optional.ofNullable(user2));
+
+        //Act
+        Trade actual = tradeService.updateTrade(trade2.getTradeId(), trade2.getWants(), trade2.getOffers(), 2);
+
+        //Assert
+        assertEquals(trade2, actual);
+    }
+
+    @Test
+    void updateTradeTest2(){
+        //Arrange
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            tradeService.updateTrade(0, "", "", 0);
+        });
+    }
+
+    @Test
+    void saveTradeTest(){
+        //Arrange
         when(userRepository.findById(2)).thenReturn(Optional.empty());
 
         //Act
 
         //Assert
         Assertions.assertThrows(BadRequestException.class, () ->{
-            tradeService.saveTrade(trade2, 2);
+            tradeService.saveTrade(trade3, 2);
         });
     }
 }

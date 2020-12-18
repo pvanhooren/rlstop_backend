@@ -9,26 +9,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import projects.rlstop.exceptions.BadRequestException;
 import projects.rlstop.exceptions.InternalServerException;
 import projects.rlstop.exceptions.NotFoundException;
+import projects.rlstop.helpers.JwtUtil;
+import projects.rlstop.models.AuthRequest;
+import projects.rlstop.models.AuthResponse;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.repositories.UserRepository;
 import projects.rlstop.services.UserService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootTest
 class UserServiceTests {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    JwtUtil jwtUtil;
+
+    @Mock
+    AuthenticationManager authenticationManager;
+
     @InjectMocks
     UserService userService;
+
+    Base64.Encoder encoder = Base64.getEncoder();
 
     User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-1111-2222-3333", "Party Time,Emeralds");
     User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", Platform.NINTENDOSWITCH, "SW-1234-5678-9000", "Dissolver");
@@ -91,7 +101,6 @@ class UserServiceTests {
     @Test
     void getUsersByPlatformTest2(){
         //Arrange
-        List<User> expected = new ArrayList<User>();
 
         //Act
 
@@ -206,13 +215,14 @@ class UserServiceTests {
     void updateUserTest(){
         //Arrange
         user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
         user1.setPlatformID("SW-0000-1111-2222");
         when(userRepository.save(user1)).thenReturn(user1);
 
         //Act
-        User actual = userService.updateUser(user1);
+        User actual = userService.updateUser(user1.getUserId(), user1.getUserName(), user1.getEmailAddress(), user1.getPlatform(), user1.getPlatformID());
 
         //Assert
         assertEquals(user1, actual);
@@ -221,48 +231,69 @@ class UserServiceTests {
     @Test
     void updateUserTest2(){
         //Arrange
-        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
-        when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
-
-        //Act
         User user4 = new User("Pjuim", "a", "a", Platform.PLAYSTATION, "a", "a");
         user4.setUserId(4);
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
+        when(userRepository.findById(4)).thenReturn(Optional.of(user4));
+
+        //Act
 
         //Assert
         assertThrows(BadRequestException.class, () ->  {
-            userService.updateUser(user4);
+            userService.updateUser(4, "Pjuim", "a", Platform.PLAYSTATION, "a");
         });
     }
 
     @Test
     void updateUserTest3(){
         //Arrange
-        when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
-        when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
-
-        //Act
         User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PLAYSTATION, "a", "a");
         user4.setUserId(4);
+        when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+        when(userRepository.findById(4)).thenReturn(Optional.of(user4));
 
+        //Act
 
         //Assert
         assertThrows(BadRequestException.class, () ->  {
-            userService.updateUser(user4);
+            userService.updateUser(4, "a", "nikkipim@gmail.com", Platform.PLAYSTATION, "a");
         });
+    }
+
+    @Test
+    void updateUserTest4(){
+        //Arrange
+        User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PLAYSTATION, "", "a");
+        user4.setUserId(4);
+        when(userRepository.findById(4)).thenReturn(Optional.of(user4));
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.updateUser(4, "a", "nikkipim@gmail.com", Platform.PLAYSTATION, "");
+        });
+
     }
 
     @Test
     void createUserTest(){
         //Arrange
+        user3.setUserId(3);
         when(userRepository.findByUserName("yourivdloo")).thenReturn(Optional.empty());
         when(userRepository.findByEmailAddress("youri.yvdl@gmail.com")).thenReturn(Optional.empty());
-        when(userRepository.save(user3)).thenReturn(user3);
+        when(jwtUtil.generateToken("yourivdloo")).thenReturn("token");
+        when(userRepository.save(any(User.class))).thenReturn(user3);
+        String creds= "yourivdloo:yourivdloo";
+        AuthResponse expected = new AuthResponse("token", "yourivdloo", 3);
 
         //Act
-        User actual = userService.createUser(user3);
+        AuthResponse actual = userService.createUser(encoder.encodeToString(creds.getBytes()), user3.getEmailAddress(), user3.getPlatform(), user3.getPlatformID(), "Fennec");
 
         //Assert
-        assertEquals(user3, actual);
+        assertEquals(expected.getToken(), actual.getToken());
     }
 
     @Test
@@ -271,13 +302,14 @@ class UserServiceTests {
         user1.setUserId(1);
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(userRepository.findByEmailAddress("a")).thenReturn(Optional.empty());
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
 
         //Act
-        User user4 = new User("Pjuim", "a", "a", Platform.PC, "a", "a");
 
         //Assert
         assertThrows(BadRequestException.class, () ->  {
-           userService.createUser(user4);
+           userService.createUser(encodedCreds, "a", Platform.PC, "a", "a");
         });
     }
 
@@ -287,13 +319,62 @@ class UserServiceTests {
         when(userRepository.findByUserName("a")).thenReturn(Optional.empty());
         user1.setUserId(1);
         when(userRepository.findByEmailAddress("nikkipim@gmail.com")).thenReturn(Optional.of(user1));
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
 
         //Act
-        User user4 = new User("a", "nikkipim@gmail.com", "a", Platform.PC, "a", "a");
 
         //Assert
         assertThrows(BadRequestException.class, () ->  {
-            userService.createUser(user4);
+            userService.createUser(encodedCreds, "nikkipim@gmail.com", Platform.PC, "a", "a");
+        });
+    }
+
+    @Test
+    void createUserTest4(){
+        //Arrange
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.createUser(encodedCreds, "nikkipim@gmail.com",  Platform.PC, "", "a");
+        });
+    }
+
+    @Test
+    void authenticateTest(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+        AuthResponse expected = new AuthResponse("token", "Pjuim", 1);
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+        AuthResponse actual = userService.authenticate(encodedCreds);
+
+        //Assert
+        assertEquals(expected.getUserName(), actual.getUserName());
+    }
+
+    @Test
+    void authenticateTest2(){
+        //Arrange
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new RuntimeException());
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.authenticate(encodedCreds);
         });
     }
 
@@ -378,6 +459,52 @@ class UserServiceTests {
         //Assert
         assertThrows(InternalServerException.class, () ->  {
             User actual = userService.clearWishlist(1);
+        });
+    }
+
+    @Test
+    void checkCredsTest(){
+        //Arrange
+        String name = "Pim";
+        String limiter= ":";
+        String password= "pimpas";
+        String creds = name + limiter + password;
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+        AuthRequest actual = userService.checkCreds(encodedCreds);
+
+        //Assert
+        assertEquals(name, actual.getUserName());
+        assertEquals(password, actual.getPassword());
+    }
+
+    @Test
+    void checkCredsTest2(){
+        //Arrange
+        String name = "Pim";
+        String limiter= ":";
+        String password= "";
+        String creds = name + limiter + password;
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            userService.checkCreds(encodedCreds);
+        });
+    }
+
+    @Test
+    void checkCredsTest3(){
+        //Arrange
+
+        //Act
+
+        //Assert
+        Assertions.assertThrows(BadRequestException.class, () ->{
+            userService.checkCreds("");
         });
     }
 

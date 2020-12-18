@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import projects.rlstop.exceptions.BadRequestException;
 import projects.rlstop.models.database.Trade;
 import projects.rlstop.models.enums.Platform;
 import projects.rlstop.services.TradeService;
@@ -51,33 +50,14 @@ public class TradeController {
 
     @PostMapping(path = "/new")
     public @ResponseBody ResponseEntity<Trade> createTrade(@RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
-            if (wants != null && !wants.isEmpty() && offers != null && !offers.isEmpty() && userId != 0) {
-                Trade trade = new Trade(wants, offers, null);
-                Trade result = tradeService.saveTrade(trade, userId);
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            }
-
-        throw new BadRequestException("The trade can not be added because it is not complete");
+        Trade result = tradeService.createTrade(wants, offers, userId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping(path = "/{id}")
     public @ResponseBody ResponseEntity<Trade> updateTrade(@PathVariable int id, @RequestParam(required= false) String wants, @RequestParam(required= false) String offers, @RequestParam int userId) {
-        Trade trade = tradeService.getTradeById(id);
-
-        if (wants != null && !wants.isEmpty()) {
-            trade.setWants(wants);
-        }
-        if (offers != null && !offers.isEmpty()) {
-            trade.setOffers(offers);
-        }
-
-        Trade result = tradeService.saveTrade(trade, userId);
-
-        if(result != null) {
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-
-        throw new BadRequestException("The trade was not updated because it was not complete.");
+        Trade result = tradeService.updateTrade(id, wants, offers, userId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }
