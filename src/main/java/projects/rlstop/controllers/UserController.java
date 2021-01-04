@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping("/auth")
-    public @ResponseBody ResponseEntity<AuthResponse> authenticate(@RequestParam(required=false) String creds){
+    public @ResponseBody ResponseEntity<AuthResponse> authenticate(@RequestParam(required=false) String creds) {
         AuthResponse response = userService.authenticate(creds);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

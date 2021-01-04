@@ -13,5 +13,5 @@ test:
 sonarqube:
   dependencies:
     - test
-  script: "mvn compile sonar:sonar"
+  script: "mvn clean install sonar:sonar"
   stage: sonarqube

@@ -4,11 +4,13 @@ public class AuthResponse {
     private String token;
     private String userName;
     private int userId;
+    private boolean isAdmin;
 
-    public AuthResponse(String token, String userName, int userId) {
+    public AuthResponse(String token, String userName, int userId, boolean isAdmin) {
         this.token = token;
         this.userName = userName;
         this.userId = userId;
+        this.isAdmin = isAdmin;
     }
 
     public String getToken() {
@@ -21,5 +23,9 @@ public class AuthResponse {
 
     public int getUserId() {
         return userId;
+    }
+
+    public boolean getIsAdmin(){
+        return isAdmin;
     }
 }

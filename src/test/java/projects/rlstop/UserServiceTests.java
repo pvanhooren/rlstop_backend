@@ -17,8 +17,10 @@ import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.helpers.JwtUtil;
 import projects.rlstop.models.AuthRequest;
 import projects.rlstop.models.AuthResponse;
+import projects.rlstop.models.database.Role;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
+import projects.rlstop.models.enums.UserRole;
 import projects.rlstop.repositories.UserRepository;
 import projects.rlstop.services.UserService;
 
@@ -287,7 +289,7 @@ class UserServiceTests {
         when(jwtUtil.generateToken("yourivdloo")).thenReturn("token");
         when(userRepository.save(any(User.class))).thenReturn(user3);
         String creds= "yourivdloo:yourivdloo";
-        AuthResponse expected = new AuthResponse("token", "yourivdloo", 3);
+        AuthResponse expected = new AuthResponse("token", "yourivdloo", 3, false);
 
         //Act
         AuthResponse actual = userService.createUser(encoder.encodeToString(creds.getBytes()), user3.getEmailAddress(), user3.getPlatform(), user3.getPlatformID(), "Fennec");
@@ -347,10 +349,14 @@ class UserServiceTests {
     @Test
     void authenticateTest(){
         //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        roles.add(new Role(UserRole.ROLE_ADMIN));
+        user1.setRoles(roles);
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        AuthResponse expected = new AuthResponse("token", "Pjuim", 1);
+        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, true);
         String creds = "Pjuim:pimpas";
         String encodedCreds = encoder.encodeToString(creds.getBytes());
 

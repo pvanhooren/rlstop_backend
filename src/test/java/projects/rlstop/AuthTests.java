@@ -15,13 +15,15 @@ class AuthTests {
         String token = "token";
         String name= "Pim";
         int id=1;
+        boolean admin = false;
 
         //Act
-        AuthResponse response = new AuthResponse(token,name,id);
+        AuthResponse response = new AuthResponse(token,name,id, false);
 
         //Assert
         assertEquals(token, response.getToken());
         assertEquals(name, response.getUserName());
         assertEquals(id, response.getUserId());
+        assertEquals(admin, response.getIsAdmin());
     }
 }

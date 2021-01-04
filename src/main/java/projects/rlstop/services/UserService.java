@@ -10,8 +10,10 @@ import projects.rlstop.exceptions.NotFoundException;
 import projects.rlstop.helpers.JwtUtil;
 import projects.rlstop.models.AuthRequest;
 import projects.rlstop.models.AuthResponse;
+import projects.rlstop.models.database.Role;
 import projects.rlstop.models.database.User;
 import projects.rlstop.models.enums.Platform;
+import projects.rlstop.models.enums.UserRole;
 import projects.rlstop.repositories.UserRepository;
 
 import java.util.*;
@@ -119,7 +121,7 @@ public class UserService {
             User result = saveUser(user);
 
             String token = jwtUtil.generateToken(authRequest.getUserName());
-            return new AuthResponse(token, result.getUserName(), result.getUserId());
+            return new AuthResponse(token, result.getUserName(), result.getUserId(), false);
         }
 
         throw new BadRequestException("Not all fields have been filled in. Please fill in the missing fields.");
@@ -138,7 +140,15 @@ public class UserService {
 
         String token = jwtUtil.generateToken(authRequest.getUserName());
         User user = getUserByUserName(authRequest.getUserName());
-        return new AuthResponse(token, user.getUserName(), user.getUserId());
+        boolean isAdmin = false;
+
+        for(Role role : user.getRoles()){
+            if(role.getRoleName() == UserRole.ROLE_ADMIN){
+                isAdmin = true;
+            }
+        }
+
+        return new AuthResponse(token, user.getUserName(), user.getUserId(), isAdmin);
     }
 
     public User addToWishlist(int id, String item) {
