@@ -61,6 +61,30 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PutMapping(path="/admin/{id}/deactivate")
+    public @ResponseBody ResponseEntity<String> deactivateUser(@PathVariable int id){
+        userService.deactivateUser(id);
+        return new ResponseEntity<>("User has successfully been deactivated.", HttpStatus.OK);
+    }
+
+    @PutMapping(path="/admin/{id}/activate")
+    public @ResponseBody ResponseEntity<String> activateUser(@PathVariable int id){
+        userService.reactivateUser(id);
+        return new ResponseEntity<>("User has successfully been activated.", HttpStatus.OK);
+    }
+
+    @PutMapping(path="/admin/{id}/grant")
+    public @ResponseBody ResponseEntity<String> makeAdmin(@PathVariable int id){
+        userService.makeAdmin(id);
+        return new ResponseEntity<>("User has successfully been granted admin rights.", HttpStatus.OK);
+    }
+
+    @PutMapping(path="/admin/{id}/remove")
+    public @ResponseBody ResponseEntity<String> removeAdmin(@PathVariable int id){
+        userService.removeAdmin(id);
+        return new ResponseEntity<>("Admin rights have successfully been disabled for this user.", HttpStatus.OK);
+    }
+
     @PutMapping(path = "/{id}/add/{item}")
     public @ResponseBody ResponseEntity<User> addToWishlist(@PathVariable int id, @PathVariable String item) {
         User user = userService.addToWishlist(id, item);

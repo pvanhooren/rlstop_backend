@@ -36,7 +36,6 @@ public class User {
     @Column(name="platformid")
     private String platformID;
 
-    @JsonIgnore
     @Column(name="active")
     private boolean active;
 

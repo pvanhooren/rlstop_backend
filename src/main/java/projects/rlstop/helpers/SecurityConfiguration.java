@@ -26,6 +26,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
+    String admin = "ADMIN";
+
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -46,6 +48,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/users/new").permitAll()
                 .antMatchers("/users/auth").permitAll()
+                .antMatchers("/users/admin/{id}/remove").hasRole(admin)
+                .antMatchers("/users/admin/{id}/grant").hasRole(admin)
+                .antMatchers("/users/admin/{id}/deactivate").hasRole(admin)
+                .antMatchers("/users/admin/{id}/activate").hasRole(admin)
                 .anyRequest().authenticated()
                 .and().httpBasic().and().sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

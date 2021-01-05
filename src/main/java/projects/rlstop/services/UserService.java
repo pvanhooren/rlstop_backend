@@ -88,6 +88,61 @@ public class UserService {
         return true;
     }
 
+    public boolean deactivateUser(int id){
+        User user = getUserById(id);
+
+        if(user.getActive()) {
+            user.setActive(false);
+            saveUser(user);
+            return true;
+        }
+
+        throw new BadRequestException("This user is already inactive.");
+    }
+
+    public boolean reactivateUser(int id){
+        User user = getUserById(id);
+
+        if(!user.getActive()) {
+            user.setActive(true);
+            saveUser(user);
+            return true;
+        }
+
+        throw new BadRequestException("This user is already active.");
+    }
+
+    public boolean makeAdmin(int id){
+        User user = getUserById(id);
+        boolean isAdmin = checkIfAdmin(user);
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role(UserRole.ROLE_USER));
+
+        if(!isAdmin){
+            roles.add(new Role(UserRole.ROLE_ADMIN));
+            user.setRoles(roles);
+            saveUser(user);
+            return true;
+        }
+
+        throw new BadRequestException("This user is already an admin.");
+    }
+
+    public boolean removeAdmin(int id){
+        User user = getUserById(id);
+        boolean isAdmin = checkIfAdmin(user);
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role(UserRole.ROLE_USER));
+
+        if(isAdmin){
+            user.setRoles(roles);
+            saveUser(user);
+            return true;
+        }
+
+        throw new BadRequestException("This user is not an admin.");
+    }
+
     public User saveUser(User user) {
         return userRepository.save(user);
     }
@@ -135,20 +190,18 @@ public class UserService {
                     new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword())
             );
         } catch (Exception ex) {
-            throw new BadRequestException("Invalid username/password");
+            throw new NotFoundException("Incorrect username or password. Please try again!");
         }
 
         String token = jwtUtil.generateToken(authRequest.getUserName());
         User user = getUserByUserName(authRequest.getUserName());
-        boolean isAdmin = false;
 
-        for(Role role : user.getRoles()){
-            if(role.getRoleName() == UserRole.ROLE_ADMIN){
-                isAdmin = true;
-            }
+        if(user.getActive()) {
+            boolean isAdmin = checkIfAdmin(user);
+            return new AuthResponse(token, user.getUserName(), user.getUserId(), isAdmin);
         }
 
-        return new AuthResponse(token, user.getUserName(), user.getUserId(), isAdmin);
+        throw new BadRequestException("Your account has been banned from the application. Send an email to support@rlstop.com if you'd like to discuss the ban.");
     }
 
     public User addToWishlist(int id, String item) {
@@ -220,5 +273,17 @@ public class UserService {
         }
 
         throw new BadRequestException("Please provide your credentials");
+    }
+
+    public boolean checkIfAdmin(User user){
+        boolean isAdmin = false;
+
+        for(Role role : user.getRoles()){
+            if(role.getRoleName() == UserRole.ROLE_ADMIN){
+                isAdmin = true;
+            }
+        }
+
+        return isAdmin;
     }
 }

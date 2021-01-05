@@ -347,6 +347,128 @@ class UserServiceTests {
     }
 
     @Test
+    void deactivateUserTest(){
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+        boolean actual = userService.deactivateUser(1);
+
+        //Assert
+        assertEquals(true, actual);
+    }
+
+    @Test
+    void deactivateUserTest2(){
+        //Arrange
+        user1.setUserId(1);
+        user1.setActive(false);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.deactivateUser(1);
+        });
+    }
+
+    @Test
+    void reactivateUserTest(){
+        user1.setUserId(1);
+        user1.setActive(false);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+        boolean actual = userService.reactivateUser(1);
+
+        //Assert
+        assertEquals(true, actual);
+    }
+
+    @Test
+    void reactivateUserTest2(){
+        //Arrange
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.reactivateUser(1);
+        });
+    }
+
+    @Test
+    void makeAdminTest(){
+        //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        user1.setRoles(roles);
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+        boolean actual = userService.makeAdmin(1);
+
+        //Assert
+        assertEquals(true, actual);
+    }
+
+    @Test
+    void makeAdminTest2(){
+        //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        roles.add(new Role(UserRole.ROLE_ADMIN));
+        user1.setRoles(roles);
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.makeAdmin(1);
+        });
+    }
+
+    @Test
+    void removeAdminTest(){
+        //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        roles.add(new Role(UserRole.ROLE_ADMIN));
+        user1.setRoles(roles);
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+        boolean actual = userService.removeAdmin(1);
+
+        //Assert
+        assertEquals(true, actual);
+    }
+
+    @Test
+    void removeAdminTest2(){
+        //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        user1.setRoles(roles);
+        user1.setUserId(1);
+        when(userRepository.findById(1)).thenReturn(Optional.of(user1));
+
+        //Act
+
+        //Assert
+        assertThrows(BadRequestException.class, () ->  {
+            userService.removeAdmin(1);
+        });
+    }
+
+    @Test
     void authenticateTest(){
         //Arrange
         List<Role> roles = new ArrayList();
@@ -377,6 +499,30 @@ class UserServiceTests {
         String encodedCreds = encoder.encodeToString(creds.getBytes());
 
         //Act
+
+        //Assert
+        assertThrows(NotFoundException.class, () ->  {
+            userService.authenticate(encodedCreds);
+        });
+    }
+
+    @Test
+    void authenticateTest3(){
+        //Arrange
+        List<Role> roles = new ArrayList();
+        roles.add(new Role(UserRole.ROLE_USER));
+        roles.add(new Role(UserRole.ROLE_ADMIN));
+        user1.setRoles(roles);
+        user1.setActive(false);
+        when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
+        when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, true);
+        String creds = "Pjuim:pimpas";
+        String encodedCreds = encoder.encodeToString(creds.getBytes());
+
+        //Act
+
 
         //Assert
         assertThrows(BadRequestException.class, () ->  {
