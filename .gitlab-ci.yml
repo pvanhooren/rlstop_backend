@@ -1,8 +1,6 @@
 stages:
   - build
   - test-sonarqube
-  - docker-stop
-  - docker-remove
   - docker-image
   - docker-container
 build:
@@ -13,19 +11,9 @@ test-sonarqube:
     - build
   script: "mvn package sonar:sonar"
   stage: test-sonarqube
-docker-stop:
-  dependencies:
-    - test-sonarqube
-  script: "docker stop rlstop-backend"
-  stage: docker-stop
-docker-remove:
-  dependencies:
-    - docker-stop
-  script: "docker rm rlstop-backend"
-  stage: docker-remove
 docker-image:
   dependencies:
-    - docker-remove
+    - test-sonarqube
   script: "docker build -t rlstop-backend ."
   stage: docker-image
 docker-container:
