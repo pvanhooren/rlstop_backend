@@ -1,19 +1,25 @@
 stages:
   - build
-  - test-sonarqube
+  - test
+  - sonarqube
   - docker-image
   - docker-container
 build:
   script: "mvn clean compile"
   stage: build
-test-sonarqube:
+test:
   dependencies:
     - build
-  script: "mvn package sonar:sonar"
-  stage: test-sonarqube
+  script: "mvn test"
+  stage: test
+sonarqube:
+  dependencies:
+    - test
+  script: "mvn sonar:sonar"
+  stage: sonarqube
 docker-image:
   dependencies:
-    - test-sonarqube
+    - sonarqube
   script: "docker build -t rlstop-backend ."
   stage: docker-image
 docker-container:
