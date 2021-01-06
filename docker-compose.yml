@@ -1,0 +1,21 @@
+version: "3"
+services:
+  rlstop-backend:
+    image: rlstop-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - rlstop
+    depends_on:
+      - rlstop
+
+  mysqldb:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    networks:
+      - rlstop
+    environment:
+      - SA_PASSWORD: "Pimpas123"
+      - ACCEPT-EULA: "Y"
+
+networks:
+  rlstop:

@@ -1,17 +1,35 @@
 stages:
   - build
-  - test
-  - sonarqube
+  - test-sonarqube
+  - docker-stop
+  - docker-remove
+  - docker-image
+  - docker-container
 build:
-  script: "mvn compile"
+  script: "mvn clean compile"
   stage: build
-test:
+test-sonarqube:
   dependencies:
     - build
-  script: "mvn test"
-  stage: test
-sonarqube:
+  script: "mvn package sonar:sonar"
+  stage: test-sonarqube
+docker-stop:
   dependencies:
-    - test
-  script: "mvn clean install sonar:sonar"
-  stage: sonarqube
+    - test-sonarqube
+  script: "docker stop rlstop-backend"
+  stage: docker-stop
+docker-remove:
+  dependencies:
+    - docker-stop
+  script: "docker rm rlstop-backend"
+  stage: docker-remove
+docker-image:
+  dependencies:
+    - docker-remove
+  script: "docker build -t rlstop-backend ."
+  stage: docker-image
+docker-container:
+  dependencies:
+    - docker-image
+  script: "docker run -p 8080:8080 --name rlstop-backend --network rlstop -d rlstop-backend"
+  stage: docker-container
