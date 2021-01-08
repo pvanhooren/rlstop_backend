@@ -42,6 +42,9 @@ class UserServiceTests {
 
     Base64.Encoder encoder = Base64.getEncoder();
 
+    String adminCode1 = "BigSplash";
+    String adminCode2 = "Ballistic";
+
     User user1 = new User("Pjuim", "nikkipim@gmail.com", "12345zes", Platform.NINTENDOSWITCH, "SW-1111-2222-3333", "Party Time,Emeralds");
     User user2 = new User("R3MC0", "remcovo@gmail.com", "voetbalman5", Platform.NINTENDOSWITCH, "SW-1234-5678-9000", "Dissolver");
     User user3 = new User("yourivdloo", "youri.yvdl@gmail.com", "yourivdloo", Platform.PC, "yourivdloo", "Fennec");
@@ -55,7 +58,7 @@ class UserServiceTests {
 
         when(userRepository.findAll()).thenReturn(userList);
 
-        List<User> expected = new ArrayList<User>();
+        List<User> expected = new ArrayList<>();
         expected.add(user1);
         expected.add(user2);
         expected.add(user3);
@@ -289,7 +292,7 @@ class UserServiceTests {
         when(jwtUtil.generateToken("yourivdloo")).thenReturn("token");
         when(userRepository.save(any(User.class))).thenReturn(user3);
         String creds= "yourivdloo:yourivdloo";
-        AuthResponse expected = new AuthResponse("token", "yourivdloo", 3, false);
+        AuthResponse expected = new AuthResponse("token", "yourivdloo", 3, adminCode1);
 
         //Act
         AuthResponse actual = userService.createUser(encoder.encodeToString(creds.getBytes()), user3.getEmailAddress(), user3.getPlatform(), user3.getPlatformID(), "Fennec");
@@ -478,7 +481,7 @@ class UserServiceTests {
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, true);
+        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, adminCode2);
         String creds = "Pjuim:pimpas";
         String encodedCreds = encoder.encodeToString(creds.getBytes());
 
@@ -517,7 +520,7 @@ class UserServiceTests {
         when(userRepository.findByUserName("Pjuim")).thenReturn(Optional.of(user1));
         when(jwtUtil.generateToken("Pjuim")).thenReturn("token");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, true);
+        AuthResponse expected = new AuthResponse("token", "Pjuim", 1, adminCode2);
         String creds = "Pjuim:pimpas";
         String encodedCreds = encoder.encodeToString(creds.getBytes());
 

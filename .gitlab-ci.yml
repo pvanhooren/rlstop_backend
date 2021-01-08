@@ -5,7 +5,7 @@ stages:
   - docker-image
   - docker-container
 build:
-  script: "mvn clean compile"
+  script: "mvn clean install -DskipTests"
   stage: build
 test:
   dependencies:
@@ -15,11 +15,12 @@ test:
 sonarqube:
   dependencies:
     - test
-  script: "mvn -DskipTests install sonar:sonar"
+  script: "mvn verify sonar:sonar"
   stage: sonarqube
 docker-image:
   dependencies:
     - sonarqube
+  before_script: "mvn -DskipTests install"
   script: "docker build -t rlstop-backend ."
   stage: docker-image
 docker-container:

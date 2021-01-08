@@ -60,7 +60,7 @@ class InterestServiceTests {
         interestsByUser1.add(interest1);
         interestsByUser1.add(interest4);
 
-        when(interestRepository.findAllByUserUserId(1)).thenReturn(interestsByUser1);
+        when(interestRepository.findAllByUserUserIdAndTradeUserActive(1, true)).thenReturn(interestsByUser1);
         when(userRepository.findById(1)).thenReturn(Optional.ofNullable(user1));
 
         //Act
@@ -88,7 +88,7 @@ class InterestServiceTests {
         //Arrange
         List<Interest> interestsByUser4 = new ArrayList<>();
 
-        when(interestRepository.findAllByUserUserId(4)).thenReturn(interestsByUser4);
+        when(interestRepository.findAllByUserUserIdAndTradeUserActive(4, true)).thenReturn(interestsByUser4);
         when(userRepository.findById(4)).thenReturn(Optional.ofNullable(user4));
 
         //Act

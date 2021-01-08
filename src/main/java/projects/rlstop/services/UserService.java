@@ -29,6 +29,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    String adminCode1 = "BigSplash";
+    String adminCode2 = "Ballistic";
+
     public List<User> getAllUsers() {
         Iterable<User> iusers = userRepository.findAll();
         List<User> users = new ArrayList<>();
@@ -114,11 +117,10 @@ public class UserService {
 
     public boolean makeAdmin(int id){
         User user = getUserById(id);
-        boolean isAdmin = checkIfAdmin(user);
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(UserRole.ROLE_USER));
 
-        if(!isAdmin){
+        if(!user.getAdmin()){
             roles.add(new Role(UserRole.ROLE_ADMIN));
             user.setRoles(roles);
             saveUser(user);
@@ -130,11 +132,10 @@ public class UserService {
 
     public boolean removeAdmin(int id){
         User user = getUserById(id);
-        boolean isAdmin = checkIfAdmin(user);
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(UserRole.ROLE_USER));
 
-        if(isAdmin){
+        if(user.getAdmin()){
             user.setRoles(roles);
             saveUser(user);
             return true;
@@ -166,7 +167,7 @@ public class UserService {
     }
 
     public AuthResponse createUser(String creds, String email, Platform platform, String platformID, String wishlist) {
-        if(creds != null && !creds.isEmpty() && email != null && !email.isEmpty() && platform != null && platformID != null && !platformID.isEmpty() && wishlist != null && !wishlist.isEmpty()) {
+        if(creds != null && !creds.isEmpty() && email != null && !email.isEmpty() && platform != null && platformID != null && !platformID.isEmpty()) {
             AuthRequest authRequest = checkCreds(creds);
 
             nameExist(0, authRequest.getUserName());
@@ -176,7 +177,7 @@ public class UserService {
             User result = saveUser(user);
 
             String token = jwtUtil.generateToken(authRequest.getUserName());
-            return new AuthResponse(token, result.getUserName(), result.getUserId(), false);
+            return new AuthResponse(token, result.getUserName(), result.getUserId(), adminCode1);
         }
 
         throw new BadRequestException("Not all fields have been filled in. Please fill in the missing fields.");
@@ -197,8 +198,10 @@ public class UserService {
         User user = getUserByUserName(authRequest.getUserName());
 
         if(user.getActive()) {
-            boolean isAdmin = checkIfAdmin(user);
-            return new AuthResponse(token, user.getUserName(), user.getUserId(), isAdmin);
+            String adminCode= adminCode1;
+
+            if (user.getAdmin()) { adminCode = adminCode2; }
+            return new AuthResponse(token, user.getUserName(), user.getUserId(), adminCode);
         }
 
         throw new BadRequestException("Your account has been banned from the application. Send an email to support@rlstop.com if you'd like to discuss the ban.");
@@ -273,17 +276,5 @@ public class UserService {
         }
 
         throw new BadRequestException("Please provide your credentials");
-    }
-
-    public boolean checkIfAdmin(User user){
-        boolean isAdmin = false;
-
-        for(Role role : user.getRoles()){
-            if(role.getRoleName() == UserRole.ROLE_ADMIN){
-                isAdmin = true;
-            }
-        }
-
-        return isAdmin;
     }
 }

@@ -6,7 +6,7 @@ import projects.rlstop.models.database.Interest;
 import java.util.Optional;
 
 public interface InterestRepository extends CrudRepository<Interest, Integer> {
-    Iterable<Interest> findAllByUserUserId(int userId);
+    Iterable<Interest> findAllByUserUserIdAndTradeUserActive(int userId, boolean active);
 
     Iterable<Interest> findAllByTradeTradeId(int tradeId);
 

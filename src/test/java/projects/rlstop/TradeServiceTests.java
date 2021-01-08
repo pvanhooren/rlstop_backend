@@ -50,7 +50,7 @@ class TradeServiceTests {
 
         Iterable<Trade> tradeList = Arrays.asList(trades);
 
-        when(tradeRepository.findAllByOrderByLastModifiedDesc()).thenReturn(tradeList);
+        when(tradeRepository.findAllByUserActiveOrderByLastModifiedDesc(true)).thenReturn(tradeList);
         when(userRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(user1));
         when(userRepository.findById(2)).thenReturn(java.util.Optional.ofNullable(user2));
         when(userRepository.findById(3)).thenReturn(java.util.Optional.ofNullable(user3));
@@ -75,7 +75,7 @@ class TradeServiceTests {
 
         Iterable<Trade> tradeList = Arrays.asList(trades);
 
-        when(tradeRepository.findAllByOrderByLastModifiedDesc()).thenReturn(tradeList);
+        when(tradeRepository.findAllByUserActiveOrderByLastModifiedDesc(true)).thenReturn(tradeList);
 
         //Act
 
@@ -138,7 +138,7 @@ class TradeServiceTests {
         tradesOnSwitch.add(trade1);
         tradesOnSwitch.add(trade2);
 
-        when(tradeRepository.findAllByUserPlatformOrderByLastModifiedDesc(Platform.NINTENDOSWITCH)).thenReturn(tradesOnSwitch);
+        when(tradeRepository.findAllByUserActiveAndUserPlatformOrderByLastModifiedDesc(true,Platform.NINTENDOSWITCH)).thenReturn(tradesOnSwitch);
         when(userRepository.findById(1)).thenReturn(java.util.Optional.ofNullable(user1));
         when(userRepository.findById(2)).thenReturn(java.util.Optional.ofNullable(user2));
 
@@ -166,7 +166,7 @@ class TradeServiceTests {
         //Arrange
         List<Trade> tradesonPS = new ArrayList<>();
 
-        when(tradeRepository.findAllByUserPlatformOrderByLastModifiedDesc(Platform.PLAYSTATION)).thenReturn(tradesonPS);
+        when(tradeRepository.findAllByUserActiveAndUserPlatformOrderByLastModifiedDesc(true, Platform.PLAYSTATION)).thenReturn(tradesonPS);
 
         //Act
 
