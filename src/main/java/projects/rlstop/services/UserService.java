@@ -120,7 +120,7 @@ public class UserService {
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(UserRole.ROLE_USER));
 
-        if(!user.getAdmin()){
+        if(!user.isAdmin()){
             roles.add(new Role(UserRole.ROLE_ADMIN));
             user.setRoles(roles);
             saveUser(user);
@@ -135,7 +135,7 @@ public class UserService {
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(UserRole.ROLE_USER));
 
-        if(user.getAdmin()){
+        if(user.isAdmin()){
             user.setRoles(roles);
             saveUser(user);
             return true;
@@ -200,7 +200,7 @@ public class UserService {
         if(user.getActive()) {
             String adminCode= adminCode1;
 
-            if (user.getAdmin()) { adminCode = adminCode2; }
+            if (user.isAdmin()) { adminCode = adminCode2; }
             return new AuthResponse(token, user.getUserName(), user.getUserId(), adminCode);
         }
 

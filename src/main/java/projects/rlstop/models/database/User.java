@@ -68,6 +68,7 @@ public class User {
         this.platform = platform;
         this.platformID = platformID;
         this.active = true;
+        this.admin = false;
         this.roles.add(new Role(UserRole.ROLE_USER));
 
         if(wishlist!=null && !wishlist.equals("")) {
@@ -137,7 +138,13 @@ public class User {
 
     public void setActive(boolean active) { this.active = active; }
 
-    public boolean getAdmin(){ return this.admin; }
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 
     public List<String> getWishlist() {
         return wishlist;

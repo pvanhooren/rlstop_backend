@@ -21,6 +21,9 @@ docker-image:
   dependencies:
     - sonarqube
   before_script:
+    - "docker stop rlstop-backend"
+    - "docker container rm rlstop-backend"
+    - "docker image rm rlstop-backend"
     - "mvn -DskipTests install"
   script: "docker build -t rlstop-backend ."
   stage: docker-image
