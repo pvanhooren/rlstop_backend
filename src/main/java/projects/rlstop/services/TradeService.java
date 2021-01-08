@@ -24,7 +24,7 @@ public class TradeService {
     private UserRepository userRepository;
 
     public List<Trade> getAllTrades(){
-        Iterable<Trade> itrades = tradeRepository.findAllByOrderByLastModifiedDesc();
+        Iterable<Trade> itrades = tradeRepository.findAllByUserActiveOrderByLastModifiedDesc(true);
         List<Trade> trades = checkIterable(itrades);
 
         if(trades.isEmpty()) {
@@ -50,7 +50,7 @@ public class TradeService {
 
     public List<Trade> getTradesByPlatform(Platform platform){
         if(platform!=null){
-            Iterable<Trade> allTrades = tradeRepository.findAllByUserPlatformOrderByLastModifiedDesc(platform);
+            Iterable<Trade> allTrades = tradeRepository.findAllByUserActiveAndUserPlatformOrderByLastModifiedDesc(true, platform);
             List<Trade> trades = checkIterable(allTrades);
 
             if(!trades.isEmpty()) {

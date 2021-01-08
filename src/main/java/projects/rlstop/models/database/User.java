@@ -39,6 +39,9 @@ public class User {
     @Column(name="active")
     private boolean active;
 
+    @Column(name="admin")
+    private boolean admin;
+
     @Convert(converter = StringListConverter.class)
     @Column(name="wishlist")
     private List<String> wishlist = new ArrayList<>();
@@ -67,12 +70,14 @@ public class User {
         this.active = true;
         this.roles.add(new Role(UserRole.ROLE_USER));
 
-        if(wishlist.contains(",")) {
-            String[] elements = wishlist.split(",");
-            List<String> fixedLengthList = Arrays.asList(elements);
-            this.wishlist = new ArrayList<>(fixedLengthList);
-        } else {
-            this.wishlist.add(wishlist);
+        if(wishlist!=null && !wishlist.equals("")) {
+            if (wishlist.contains(",")) {
+                String[] elements = wishlist.split(",");
+                List<String> fixedLengthList = Arrays.asList(elements);
+                this.wishlist = new ArrayList<>(fixedLengthList);
+            } else {
+                this.wishlist.add(wishlist);
+            }
         }
     }
 
@@ -132,6 +137,8 @@ public class User {
 
     public void setActive(boolean active) { this.active = active; }
 
+    public boolean getAdmin(){ return this.admin; }
+
     public List<String> getWishlist() {
         return wishlist;
     }
@@ -158,6 +165,14 @@ public class User {
     }
 
     public void setRoles(List<Role> roles) {
+        this.admin=false;
+
+        for(Role role : roles){
+            if(role.getRoleName() == UserRole.ROLE_ADMIN){
+                this.admin = true;
+            }
+        }
+
         this.roles = roles;
     }
 }

@@ -31,7 +31,7 @@ public class InterestService {
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            Iterable<Interest> allInterests = interestRepository.findAllByUserUserId(userId);
+            Iterable<Interest> allInterests = interestRepository.findAllByUserUserIdAndTradeUserActive(userId, true);
 
             for (Interest interest : allInterests) {
                 Optional<User> user2 = userRepository.findById(interest.getUser().getUserId());
