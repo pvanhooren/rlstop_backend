@@ -66,9 +66,7 @@ public class Trade {
         this.wants = wants;
     }
 
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
+    public LocalDateTime getLastModified() { return lastModified; }
 
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;

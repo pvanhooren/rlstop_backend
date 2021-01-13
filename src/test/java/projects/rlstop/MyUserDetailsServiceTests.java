@@ -26,11 +26,11 @@ class MyUserDetailsServiceTests {
     @InjectMocks
     MyUserDetailsService myUserDetailsService;
 
+    User pim = new User("Pim", "pim@pim.pim", "pimpas", Platform.NINTENDOSWITCH, "SW-0000-0000-0000", "Nothing really");
+
     @Test
     void loadByUserNameTest(){
         //Arrange
-        User pim = new User("Pim", "pim@pim.pim", "pimpas", Platform.NINTENDOSWITCH, "SW-0000-0000-0000", "Nothing really");
-
         when(userRepository.findByUserName("Pim")).thenReturn(java.util.Optional.of(pim));
 
         //Act

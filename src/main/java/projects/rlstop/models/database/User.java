@@ -142,10 +142,6 @@ public class User {
         return admin;
     }
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
     public List<String> getWishlist() {
         return wishlist;
     }

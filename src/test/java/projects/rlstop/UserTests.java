@@ -56,13 +56,13 @@ class UserTests {
     @Test
     void addToWishlistTest(){
         //Arrange
-        User user = new User("Fifalosophy", "matthy@gmail.com", "duimpiee", Platform.XBOX, "matthyas", "Tidal Stream");
+        User user = new User("Fifalosophy", "matthy@gmail.com", "duimpiee", Platform.XBOX, "matthyas", ",Tidal Stream");
 
         //Act
         user.addToWishlist("20XX");
 
         //Assert
-        assertEquals("20XX", user.getWishlist().get(1));
+        assertEquals("20XX", user.getWishlist().get(0));
     }
 
     @Test

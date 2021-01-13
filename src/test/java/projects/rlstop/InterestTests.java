@@ -20,15 +20,17 @@ class InterestTests {
         interestedUser.setUserId(2);
         Trade trade = new Trade("2000c", "Interstellar", author);
         trade.setTradeId(1);
+        String message = "I'll do it for 1800c";
 
         //Act
-        String message = "I'll do it for 1800c";
-        Interest interest = new Interest(interestedUser, trade, message);
+        Interest interest = new Interest(interestedUser, trade, "");
+        interest.setComment(message);
         interest.setInterestId(1);
 
         //Assert
         assertEquals(2, interest.getUser().getUserId());
         assertEquals(1, interest.getTrade().getTradeId());
+        assertEquals(1, interest.getInterestId());
         assertEquals(message, interest.getComment());
     }
 

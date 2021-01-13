@@ -29,27 +29,7 @@ public class Role {
 
     }
 
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
     public UserRole getRoleName() {
         return roleName;
-    }
-
-    public void setRoleName(UserRole roleName) {
-        this.roleName = roleName;
-    }
-
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<User> users) {
-        this.users = users;
     }
 }
